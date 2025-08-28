@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:sizer/sizer.dart';
 
 class AppThemes {
@@ -10,14 +11,23 @@ class AppThemes {
       surface: Color(0xFFF5F5F5),
     ),
     textTheme: TextTheme(
-      bodyLarge: TextStyle(
+      bodyLarge: GoogleFonts.poppins(
         color: Color(0xFF212121),
-        fontSize: 20.sp,
+        fontSize: 16.sp,
         fontWeight: FontWeight.bold,
       ),
-      bodyMedium: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
-      bodySmall: TextStyle(fontSize: 16.sp),
-      titleSmall: TextStyle(fontSize: 14.sp),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      bodySmall: GoogleFonts.lato(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.bold,
+      ),
+      titleSmall: GoogleFonts.poppins(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.bold,
+      ),
     ),
   );
 
@@ -30,14 +40,23 @@ class AppThemes {
       surface: Color(0xFF121212),
     ),
     textTheme: TextTheme(
-      bodyLarge: TextStyle(
-        color: Color(0xFF212121),
-        fontSize: 20.sp,
+      bodyLarge: GoogleFonts.poppins(
+        color: Color(0xFFFFFFFF),
+        fontSize: 16.sp,
         fontWeight: FontWeight.bold,
       ),
-      bodyMedium: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
-      bodySmall: TextStyle(fontSize: 16.sp),
-      titleSmall: TextStyle(fontSize: 14.sp),
+      bodyMedium: GoogleFonts.inter(
+        fontSize: 14.sp,
+        fontWeight: FontWeight.w600,
+      ),
+      bodySmall: GoogleFonts.lato(
+        fontSize: 13.sp,
+        fontWeight: FontWeight.bold,
+      ),
+      titleSmall: GoogleFonts.poppins(
+        fontSize: 12.sp,
+        fontWeight: FontWeight.bold,
+      ),
     ),
   );
 }

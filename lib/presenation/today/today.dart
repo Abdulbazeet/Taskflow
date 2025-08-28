@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:sizer/sizer.dart';
+import 'package:table_calendar/table_calendar.dart';
 
 class Today extends StatefulWidget {
   const Today({super.key});
@@ -8,8 +11,107 @@ class Today extends StatefulWidget {
 }
 
 class _TodayState extends State<Today> {
+  final now = DateFormat('EEEE d MMMM y').format(DateTime.now()).toString();
+  DateTime selectedDay = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SizedBox(height: 1.h),
+            Text('WELCOME BACK', style: Theme.of(context).textTheme.bodySmall),
+            Text('OLATUNJI', style: Theme.of(context).textTheme.bodyLarge),
+          ],
+        ),
+      ),
+      body: SafeArea(
+        child: ListView(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          children: [
+            SizedBox(height: 2.sh),
+            Container(
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(3.h),
+              
+              ),
+              padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
+
+              child: TableCalendar(
+                focusedDay: DateTime.now(),
+                firstDay: DateTime(1999),
+                lastDay: DateTime(2100),
+                calendarFormat: CalendarFormat.week,
+                headerStyle: HeaderStyle(
+                  formatButtonVisible: false,
+                  leftChevronIcon: SizedBox.shrink(),
+                  rightChevronIcon: SizedBox.shrink(),
+                  leftChevronPadding: EdgeInsets.zero,
+                  headerPadding: EdgeInsets.only(bottom: 1.sh),
+                ),
+                daysOfWeekStyle: DaysOfWeekStyle(decoration: BoxDecoration()),
+                daysOfWeekHeight: 6.h,
+
+                calendarBuilders: CalendarBuilders(
+                  todayBuilder: (context, date, events) {
+                    return Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.greenAccent,
+                      ),
+                      child: Center(
+                        child: Text(
+                          date.day.toString(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    );
+                  },
+                  defaultBuilder: (context, day, focusedDay) {
+                    if (day.isBefore(focusedDay)) {
+                      return Container(
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Colors.white,
+                        ),
+                        child: Center(
+                          child: Icon(
+                            Icons.remove,
+                            color: Colors.grey,
+                            size: 20.sp,
+                          ),
+                        ), 
+                      );
+                    }
+                    return Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.grey.shade300,
+                      ),
+                      child: Center(
+                        child: Text(
+                          day.day.toString(),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ),
+            SizedBox(height: 3.sh),
+            Text(
+              "Today's Tasks",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
