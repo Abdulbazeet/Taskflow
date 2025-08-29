@@ -1,0 +1,39 @@
+class AppUtils {
+  static List<Map<String, dynamic>> habits = [
+    {
+      "habitName": "Drink Water",
+      "frequencyValue": 8,
+      "frequencyUnit": "times per day",
+      "achievedValue": 5,
+      "status": "incomplete", // 5 < 8
+    },
+    {
+      "habitName": "Morning Run",
+      "frequencyValue": 3,
+      "frequencyUnit": "days per week",
+      "achievedValue": 3,
+      "status": "completed", // 3 == 3
+    },
+    {
+      "habitName": "Read Book",
+      "frequencyValue": 2,
+      "frequencyUnit": "hours per day",
+      "achievedValue": 1,
+      "status": "incomplete", // 1 < 2
+    },
+    {
+      "habitName": "Meditation",
+      "frequencyValue": 7,
+      "frequencyUnit": "days per week",
+      "achievedValue": 7,
+      "status": "completed", // 7 == 7
+    },
+    {
+      "habitName": "Coding Practice",
+      "frequencyValue": 10,
+      "frequencyUnit": "hours per week",
+      "achievedValue": 6,
+      "status": "incomplete", // 6 < 10
+    },
+  ];
+}

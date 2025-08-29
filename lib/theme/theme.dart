@@ -22,7 +22,7 @@ class AppThemes {
       ),
       bodySmall: GoogleFonts.lato(
         fontSize: 13.sp,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
       titleSmall: GoogleFonts.poppins(
         fontSize: 12.sp,
@@ -51,7 +51,7 @@ class AppThemes {
       ),
       bodySmall: GoogleFonts.lato(
         fontSize: 13.sp,
-        fontWeight: FontWeight.bold,
+        fontWeight: FontWeight.normal,
       ),
       titleSmall: GoogleFonts.poppins(
         fontSize: 12.sp,

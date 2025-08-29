@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:task_flow/model/habits.dart';
+import 'package:task_flow/utils/utils.dart';
 
 class Today extends StatefulWidget {
   const Today({super.key});
@@ -38,7 +40,6 @@ class _TodayState extends State<Today> {
               decoration: BoxDecoration(
                 color: Theme.of(context).colorScheme.surface,
                 borderRadius: BorderRadius.circular(3.h),
-              
               ),
               padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
 
@@ -85,7 +86,7 @@ class _TodayState extends State<Today> {
                             color: Colors.grey,
                             size: 20.sp,
                           ),
-                        ), 
+                        ),
                       );
                     }
                     return Container(
@@ -108,6 +109,82 @@ class _TodayState extends State<Today> {
             Text(
               "Today's Tasks",
               style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: AppUtils.habits.length,
+
+              itemBuilder: (context, index) {
+                List<Habits> habitItems = [];
+                final List habit = AppUtils.habits;
+                habitItems = habit.map((e) => Habits.fromMap(e)).toList();
+                return Container(
+                  height: 14.sh,
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.surface,
+
+                    borderRadius: BorderRadius.circular(3.h),
+                  ),
+                  margin: EdgeInsets.symmetric(vertical: 1.sh),
+
+                  width: 100.w,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 3.sw,
+                    vertical: 2.sh,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+
+                    children: [
+                      Text(
+                        habitItems[index].habitName,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      SizedBox(height: 1.sh),
+                      Row(
+                        children: [
+                          Text(
+                            'Completed: ${habitItems[index].achievedValue} / ${habitItems[index].frequencyValue} ${habitItems[index].frequencyUnit}',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 1.sh),
+
+                      Expanded(
+                        child: LinearProgressIndicator(
+                          borderRadius: BorderRadius.circular(2.sh),
+
+                          value:
+                              habitItems[index].achievedValue /
+                              habitItems[index].frequencyValue,
+                          backgroundColor: Colors.grey.shade300,
+                          color: habitItems[index].status == "completed"
+                              ? Colors.green
+                              : Colors.blue,
+                        ),
+                      ),
+                      SizedBox(height: 1.sh),
+
+                      Row(
+                        children: [
+                          Text(
+                            'Progress',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                          Spacer(),
+                          Text(
+                            '${(habitItems[index].achievedValue / habitItems[index].frequencyValue) * 100} %',
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
           ],
         ),
