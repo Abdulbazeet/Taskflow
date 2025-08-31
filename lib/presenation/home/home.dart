@@ -15,7 +15,14 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List _body = [Today(), Stats(), History(), Settings()];
+  final List<String> _frequency = [
+    'none',
+    'hours per day',
+    'times per day',
+    'days per week',
+  ];
   int _index = 0;
+  String? _selectedFrequency;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,36 +57,178 @@ class _HomeState extends State<Home> {
               onPressed: () {
                 showModalBottomSheet(
                   context: context,
-                  
-                  builder: (context) {
-                    return BottomSheet(
 
-                      onClosing: () {},
-                    
-                      builder: (context) {
-                        return Padding(
-                          padding:  EdgeInsets.symmetric(horizontal: 5.sw),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(height: 2.sh),
-                              Text(
-                                'Name of  Habit',
-                                style: Theme.of(context).textTheme.bodyLarge,
+                  builder: (context) {
+                    return StatefulBuilder(
+                      builder: (context, setState) {
+                        return BottomSheet(
+                          onClosing: () {},
+
+                          builder: (context) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 5.sw,
+                                vertical: 2.sh,
                               ),
-                              SizedBox(height: 1.sh),
-                              TextField(
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(2.sh),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: 2.sh),
+                                  Center(
+                                    child: Text(
+                                      'ADD NEW HABIT',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleMedium!
+                                          .copyWith(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
                                   ),
-                                  hintText: 'eg. Drink Water',
-                                ),
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                  SizedBox(height: 2.sh),
+
+                                  TextField(
+                                    decoration: InputDecoration(
+                                      hintStyle: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.normal,
+                                          ),
+                                      border: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          2.sh,
+                                        ),
+                                        borderSide: BorderSide(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                      ),
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          2.sh,
+                                        ),
+                                        borderSide: BorderSide(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                      ),
+                                      hintText: 'Add Habit name',
+                                    ),
+
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium!,
+                                  ),
+                                  SizedBox(height: 2.sh),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Add frequency',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                      Spacer(),
+
+                                      SizedBox(
+                                        width: 8.sw,
+                                        child: TextField(
+                                          textAlign: TextAlign.center,
+                                          decoration: InputDecoration(
+                                            hintStyle: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                            ),
+                                            border: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                            ),
+                                            hintText: '0',
+                                          ),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium!,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4.sw),
+                                      DropdownButton<String>(
+                                        items: _frequency
+                                            .map(
+                                              (e) => DropdownMenuItem<String>(
+                                                value: e,
+                                                child: Text(
+                                                  e,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedFrequency = value;
+                                          });
+                                        },
+                                        value: _selectedFrequency,
+                                        underline: SizedBox.shrink(),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 2.sh),
+                                  ElevatedButton(
+                                    onPressed: () {},
+                                    style: ElevatedButton.styleFrom(
+                                      minimumSize: Size(100.w, 6.h),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          2.sh,
+                                        ),
+                                      ),
+                                      backgroundColor: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                                    child: Text(
+                                      'ADD HABIT',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Colors.white,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                    ),
+                                  ),
+                                ],
                               ),
-                              SizedBox(height: 2.sh),
-                            ],
-                          ),
+                            );
+                          },
+                          showDragHandle: false
+                          
                         );
                       },
                     );
