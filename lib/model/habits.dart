@@ -1,19 +1,27 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class Habits {
+import 'package:hive_flutter/adapters.dart';
+part 'habits.g.dart';
+
+@HiveType(typeId: 0)
+class Habits extends HiveObject {
+  @HiveField(0)
   final String habitName;
+  @HiveField(1)
   final int frequencyValue;
+  @HiveField(2)
   final String frequencyUnit;
+  @HiveField(3)
   final int achievedValue;
-  final String status;
+
 
   Habits({
     required this.habitName,
     required this.frequencyValue,
     required this.frequencyUnit,
     required this.achievedValue,
-    required this.status,
+   
   }); // "completed" or "incomplete"
 
   Map<String, dynamic> toMap() {
@@ -22,7 +30,6 @@ class Habits {
       'frequencyValue': frequencyValue,
       'frequencyUnit': frequencyUnit,
       'achievedValue': achievedValue,
-      'status': status,
     };
   }
 
@@ -32,7 +39,6 @@ class Habits {
       frequencyValue: map['frequencyValue'] as int,
       frequencyUnit: map['frequencyUnit'] as String,
       achievedValue: map['achievedValue'] as int,
-      status: map['status'] as String,
     );
   }
 

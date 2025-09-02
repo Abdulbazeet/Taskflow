@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/adapters.dart';
 import 'package:sizer/sizer.dart';
+import 'package:task_flow/model/habits.dart';
 import 'package:task_flow/routing/routes.dart';
 import 'package:task_flow/theme/theme.dart';
 
-void main() {
+void main() async {
   runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+  await Hive.initFlutter();
+  Hive.registerAdapter(HabitsAdapter());
+  await Hive.openBox('habits_box');
 }
 
 class MyApp extends StatelessWidget {

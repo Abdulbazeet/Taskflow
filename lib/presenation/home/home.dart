@@ -56,6 +56,7 @@ class _HomeState extends State<Home> {
           ? FloatingActionButton(
               onPressed: () {
                 showModalBottomSheet(
+                  enableDrag: true,
                   context: context,
 
                   builder: (context) {
@@ -227,12 +228,15 @@ class _HomeState extends State<Home> {
                               ),
                             );
                           },
-                          showDragHandle: false
-                          
+                          enableDrag: true,
                         );
+
+                      
                       },
+
                     );
                   },
+                  
                 );
               },
               child: Icon(Icons.add),
