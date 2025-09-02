@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:sizer/sizer.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import 'package:task_flow/presenation/history/history.dart';
+import 'package:task_flow/presenation/home/bloc/home_bloc.dart';
 import 'package:task_flow/presenation/settings/settings.dart';
 import 'package:task_flow/presenation/stats/stats.dart';
 import 'package:task_flow/presenation/today/today.dart';
@@ -22,7 +24,8 @@ class _HomeState extends State<Home> {
     'days per week',
   ];
   int _index = 0;
-  String? _selectedFrequency;
+  String _selectedFrequency = 'none';
+  final TextEditingController _habitNameController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -191,7 +194,7 @@ class _HomeState extends State<Home> {
                                             .toList(),
                                         onChanged: (value) {
                                           setState(() {
-                                            _selectedFrequency = value;
+                                            _selectedFrequency = value!;
                                           });
                                         },
                                         value: _selectedFrequency,
@@ -200,29 +203,76 @@ class _HomeState extends State<Home> {
                                     ],
                                   ),
                                   SizedBox(height: 2.sh),
-                                  ElevatedButton(
-                                    onPressed: () {},
-                                    style: ElevatedButton.styleFrom(
-                                      minimumSize: Size(100.w, 6.h),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(
-                                          2.sh,
-                                        ),
-                                      ),
-                                      backgroundColor: Theme.of(
-                                        context,
-                                      ).colorScheme.primary,
-                                    ),
-                                    child: Text(
-                                      'ADD HABIT',
-                                      style: Theme.of(context)
-                                          .textTheme
-                                          .bodyMedium!
-                                          .copyWith(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold,
+                                  BlocConsumer<HomeBloc, HomeState>(
+                                    listener: (context, state) {
+                                      if (state is AddHabitSuccess) {
+                                        Navigator.pop(context);
+                                      } else if (state is AddHabitFailure) {
+                                        Navigator.pop(context);
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          SnackBar(
+                                            content: Text(state.errorMessage),
                                           ),
-                                    ),
+                                        );
+                                      }
+                                    },
+                                    builder: (context, state) {
+                                      if (state is AddHabitLoading) {
+                                        return Center(
+                                          child: ElevatedButton(
+                                            onPressed: () {},
+                                            style: ElevatedButton.styleFrom(
+                                              minimumSize: Size(100.w, 6.h),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(2.sh),
+                                              ),
+                                              backgroundColor: Colors.grey,
+                                            ),
+                                            child:
+                                                CircularProgressIndicator.adaptive(
+                                                  backgroundColor: Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary,
+                                                ),
+                                          ),
+                                        );
+                                      }
+                                      return ElevatedButton(
+                                        onPressed: () {
+                                          if(_habitNameController.text.isEmpty ){
+                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter a habit name')));
+                                            return;
+                                          } else{
+                                            
+
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(100.w, 6.h),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              2.sh,
+                                            ),
+                                          ),
+                                          backgroundColor: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                        child: Text(
+                                          'ADD HABIT',
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                color: Colors.white,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                        ),
+                                      );
+                                    },
                                   ),
                                 ],
                               ),
@@ -230,13 +280,9 @@ class _HomeState extends State<Home> {
                           },
                           enableDrag: true,
                         );
-
-                      
                       },
-
                     );
                   },
-                  
                 );
               },
               child: Icon(Icons.add),

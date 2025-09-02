@@ -14,6 +14,7 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
   Future<void> _addHabit(AddHabit event, Emitter<HomeState> emit) async {
     emit(AddHabitLoading());
     try {
+      await Future.delayed(const Duration(seconds: 4));
       List<Habits> habitsList = [];
       Habits newHabit = Habits(
         habitName: event.habitName,

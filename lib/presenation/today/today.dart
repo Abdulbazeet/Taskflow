@@ -44,6 +44,7 @@ class _TodayState extends State<Today> {
               padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
 
               child: TableCalendar(
+                availableGestures: AvailableGestures.none,
                 focusedDay: DateTime.now(),
                 firstDay: DateTime(1999),
                 lastDay: DateTime(2100),
