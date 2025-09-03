@@ -1,0 +1,47 @@
+import 'package:sqflite/sqflite.dart';
+import 'package:sqflite/sqlite_api.dart';
+import 'package:task_flow/model/habits.dart';
+
+class DatabaseHelper {
+  static final DatabaseHelper instance = DatabaseHelper._init();
+  static Database? _database;
+  DatabaseHelper._init();
+
+  Future<Database> get database async {
+    if (_database != null) return _database!;
+    _database = await _initDB('habits.db');
+    return _database!;
+  }
+
+  Future<Database> _initDB(String filePath) async {
+    final dbPath = await getDatabasesPath();
+    final path = '$dbPath/$filePath';
+    return await openDatabase(path, version: 1, onCreate: _createDB);
+  }
+
+  Future _createDB(Database db, int version) async {
+    const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+    const textType = 'TEXT NOT NULL';
+    const intType = 'INTEGER NOT NULL';
+
+    await db.execute('''
+    CREATE TABLE habits (
+      id $idType,
+      habitName $textType,
+      frequencyValue $intType,
+      frequencyUnit $textType,
+      achievedValue $intType
+    )''');
+  }
+
+  Future addHabits(Habits habits) async {
+    Database db = await database;
+    await db.insert('habits', habits.toMap());
+  }
+
+  Future<List<Habits>> getAllHbits() async {
+    Database db = await database;
+    final habitsMap = await db.query('habits');
+    return habitsMap.map((e) => Habits.fromMap(e)).toList();
+  }
+}

@@ -10,9 +10,6 @@ import 'package:task_flow/theme/theme.dart';
 void main() async {
   runApp(const MyApp());
   WidgetsFlutterBinding.ensureInitialized();
-  await Hive.initFlutter();
-  Hive.registerAdapter(HabitsAdapter());
-  await Hive.openBox('habits_box');
 }
 
 class MyApp extends StatelessWidget {

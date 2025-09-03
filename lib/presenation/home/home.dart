@@ -25,7 +25,12 @@ class _HomeState extends State<Home> {
   ];
   int _index = 0;
   String _selectedFrequency = 'none';
+<<<<<<< HEAD
   final TextEditingController _habitNameController = TextEditingController();
+=======
+  TextEditingController _name = TextEditingController();
+  TextEditingController _value = TextEditingController();
+>>>>>>> d4b978a (`Added sqflite and sqflite_darwin dependencies, replaced Hive with sqflite for database operations, and integrated Bloc library for state management.`)
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -93,6 +98,7 @@ class _HomeState extends State<Home> {
                                   SizedBox(height: 2.sh),
 
                                   TextField(
+                                    controller: _name,
                                     decoration: InputDecoration(
                                       hintStyle: Theme.of(context)
                                           .textTheme
@@ -142,6 +148,7 @@ class _HomeState extends State<Home> {
                                       SizedBox(
                                         width: 8.sw,
                                         child: TextField(
+                                          controller: _value,
                                           textAlign: TextAlign.center,
                                           decoration: InputDecoration(
                                             hintStyle: Theme.of(context)
@@ -205,6 +212,7 @@ class _HomeState extends State<Home> {
                                   SizedBox(height: 2.sh),
                                   BlocConsumer<HomeBloc, HomeState>(
                                     listener: (context, state) {
+<<<<<<< HEAD
                                       if (state is AddHabitSuccess) {
                                         Navigator.pop(context);
                                       } else if (state is AddHabitFailure) {
@@ -257,6 +265,59 @@ class _HomeState extends State<Home> {
                                               2.sh,
                                             ),
                                           ),
+=======
+                                      // TODO: implement listener
+                                    },
+                                    builder: (context, state) {
+                                      return ElevatedButton(
+                                        onPressed: () {
+                                          if (_name.text.isEmpty) {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'The habit name must not be empty',
+                                                ),
+                                              ),
+                                            );
+                                          } else if (_name.text.isNotEmpty &&
+                                              _value.text.isNotEmpty &&
+                                              _selectedFrequency == 'none') {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Frequency unit cannot be none',
+                                                ),
+                                              ),
+                                            );
+                                          } else if (_name.text.isNotEmpty &&
+                                              _value.text.isEmpty &&
+                                              _selectedFrequency != 'none') {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Frequency value cannot be 0 $_selectedFrequency',
+                                                ),
+                                              ),
+                                            );
+                                          }
+                                        },
+                                        style: ElevatedButton.styleFrom(
+                                          minimumSize: Size(100.w, 6.h),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              2.sh,
+                                            ),
+                                          ),
+>>>>>>> d4b978a (`Added sqflite and sqflite_darwin dependencies, replaced Hive with sqflite for database operations, and integrated Bloc library for state management.`)
                                           backgroundColor: Theme.of(
                                             context,
                                           ).colorScheme.primary,

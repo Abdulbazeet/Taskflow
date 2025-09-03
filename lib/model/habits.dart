@@ -2,17 +2,11 @@
 import 'dart:convert';
 
 import 'package:hive_flutter/adapters.dart';
-part 'habits.g.dart';
 
-@HiveType(typeId: 0)
-class Habits extends HiveObject {
-  @HiveField(0)
+class Habits   {
   final String habitName;
-  @HiveField(1)
   final int frequencyValue;
-  @HiveField(2)
   final String frequencyUnit;
-  @HiveField(3)
   final int achievedValue;
 
 
