@@ -25,12 +25,9 @@ class _HomeState extends State<Home> {
   ];
   int _index = 0;
   String _selectedFrequency = 'none';
-<<<<<<< HEAD
   final TextEditingController _habitNameController = TextEditingController();
-=======
   TextEditingController _name = TextEditingController();
   TextEditingController _value = TextEditingController();
->>>>>>> d4b978a (`Added sqflite and sqflite_darwin dependencies, replaced Hive with sqflite for database operations, and integrated Bloc library for state management.`)
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -371,7 +368,6 @@ class _HomeState extends State<Home> {
                                               2.sh,
                                             ),
                                           ),
->>>>>>> d4b978a (`Added sqflite and sqflite_darwin dependencies, replaced Hive with sqflite for database operations, and integrated Bloc library for state management.`)
                                           backgroundColor: Theme.of(
                                             context,
                                           ).colorScheme.primary,
