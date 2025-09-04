@@ -25,9 +25,15 @@ final class AddHabitFailure extends HomeState {
   List<Object?> get props => [errorMessage];
 }
 
-final class AddHabitLoading extends HomeState {}
+final class AddHabitLoading extends HomeState {
+  @override
+  List<Object?> get props => [];
+}
 
-final class ListHabitsLoading extends HomeState {}
+final class ListHabitsLoading extends HomeState {
+  @override
+  List<Object?> get props => [];
+}
 
 final class ListHabitsError extends HomeState {
   final String error;
