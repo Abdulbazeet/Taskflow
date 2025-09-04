@@ -41,7 +41,25 @@ class DatabaseHelper {
 
   Future<List<Habits>> getAllHbits() async {
     Database db = await database;
-    final habitsMap = await db.query('habits');
-    return habitsMap.map((e) => Habits.fromMap(e)).toList();
+    final habitsMap = await db.query('habits', orderBy: 'id DESC');
+    return List.generate(
+      habitsMap.length,
+      (index) => Habits.fromMap(habitsMap[index]),
+    );
+  }
+
+  Future updateHabit(Habits habits, int index) async {
+    Database db = await database;
+    await db.update(
+      'habits',
+      habits.toMap(),
+      where: 'id = ?',
+      whereArgs: [index],
+    );
+  }
+
+  Future deleteHabit(Habits habits, int index) async {
+    Database db = await database;
+    await db.delete('habits', where: 'id = ?', whereArgs: [index]);
   }
 }

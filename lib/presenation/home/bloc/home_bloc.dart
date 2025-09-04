@@ -11,8 +11,10 @@ part 'home_state.dart';
 
 class HomeBloc extends Bloc<HomeEvent, HomeState> {
   final DatabaseHelper dbHelper = DatabaseHelper.instance;
+  List<Habits> currentHabits = [];
   HomeBloc() : super(HomeInitial()) {
     on<AddHabit>(_addHabit);
+    on<ListHabits>(_listHabiits);
   }
   Future<void> _addHabit(AddHabit event, Emitter<HomeState> emit) async {
     emit(AddHabitLoading());
@@ -26,9 +28,31 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       );
       await dbHelper.addHabits(newHabit);
 
-      emit(AddHabitSuccess());
+      emit(
+        AddHabitSuccess(
+          message: ' ${event.habitName} has been added successfully',
+        ),
+      );
+      final updatedHabits = await dbHelper.getAllHbits();
+      currentHabits = updatedHabits;
+      emit(ListHabitsSuccess(habits: updatedHabits));
     } catch (e) {
       emit(AddHabitFailure(errorMessage: e.toString()));
+    }
+  }
+
+  Future<void> _listHabiits(ListHabits event, Emitter<HomeState> emit) async {
+    emit(ListHabitsLoading());
+    try {
+      final result = await dbHelper.getAllHbits();
+      currentHabits = result; // Update current habits
+      if (result.isEmpty) {
+        emit(ListHabitEmpty());
+      } else {
+        emit(ListHabitsSuccess(habits: result));
+      }
+    } catch (e) {
+      emit(ListHabitsError(error: e.toString()));
     }
   }
 }

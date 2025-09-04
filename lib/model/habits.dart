@@ -3,20 +3,20 @@ import 'dart:convert';
 
 import 'package:hive_flutter/adapters.dart';
 
-class Habits   {
+class Habits {
   final String habitName;
   final int frequencyValue;
   final String frequencyUnit;
   final int achievedValue;
-
+  int? id;
 
   Habits({
     required this.habitName,
     required this.frequencyValue,
     required this.frequencyUnit,
     required this.achievedValue,
-   
-  }); // "completed" or "incomplete"
+    this.id,
+  });
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
@@ -24,11 +24,13 @@ class Habits   {
       'frequencyValue': frequencyValue,
       'frequencyUnit': frequencyUnit,
       'achievedValue': achievedValue,
+      'id': id,
     };
   }
 
   factory Habits.fromMap(Map<String, dynamic> map) {
     return Habits(
+      id: map['id'] as int,
       habitName: map['habitName'] as String,
       frequencyValue: map['frequencyValue'] as int,
       frequencyUnit: map['frequencyUnit'] as String,

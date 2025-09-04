@@ -212,63 +212,29 @@ class _HomeState extends State<Home> {
                                   SizedBox(height: 2.sh),
                                   BlocConsumer<HomeBloc, HomeState>(
                                     listener: (context, state) {
-<<<<<<< HEAD
-                                      if (state is AddHabitSuccess) {
-                                        Navigator.pop(context);
-                                      } else if (state is AddHabitFailure) {
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          SnackBar(
-                                            content: Text(state.errorMessage),
-                                          ),
-                                        );
-                                      }
-                                    },
-                                    builder: (context, state) {
-                                      if (state is AddHabitLoading) {
-                                        return Center(
-                                          child: ElevatedButton(
-                                            onPressed: () {},
-                                            style: ElevatedButton.styleFrom(
-                                              minimumSize: Size(100.w, 6.h),
-                                              shape: RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(2.sh),
-                                              ),
-                                              backgroundColor: Colors.grey,
-                                            ),
-                                            child:
-                                                CircularProgressIndicator.adaptive(
-                                                  backgroundColor: Theme.of(
-                                                    context,
-                                                  ).colorScheme.primary,
-                                                ),
-                                          ),
-                                        );
-                                      }
-                                      return ElevatedButton(
-                                        onPressed: () {
-                                          if(_habitNameController.text.isEmpty ){
-                                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Please enter a habit name')));
-                                            return;
-                                          } else{
-                                            
-
-                                          }
-                                        },
-                                        style: ElevatedButton.styleFrom(
-                                          minimumSize: Size(100.w, 6.h),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(
-                                              2.sh,
-                                            ),
-                                          ),
-=======
                                       // TODO: implement listener
                                     },
                                     builder: (context, state) {
+                                      if (state is AddHabitLoading) {
+                                        return ElevatedButton(
+                                          onPressed: () {},
+                                          style: ElevatedButton.styleFrom(
+                                            minimumSize: Size(100.w, 6.h),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(2.sh),
+                                            ),
+                                            backgroundColor: Colors.grey,
+                                          ),
+                                          child:
+                                              CircularProgressIndicator.adaptive(
+                                                backgroundColor: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                        );
+                                      }
+
                                       return ElevatedButton(
                                         onPressed: () {
                                           if (_name.text.isEmpty) {
@@ -282,9 +248,10 @@ class _HomeState extends State<Home> {
                                                 ),
                                               ),
                                             );
-                                          } else if (_name.text.isNotEmpty &&
-                                              _value.text.isNotEmpty &&
-                                              _selectedFrequency == 'none') {
+                                            return;
+                                          }
+
+                                          if (_selectedFrequency == 'none') {
                                             Navigator.pop(context);
                                             ScaffoldMessenger.of(
                                               context,
@@ -295,17 +262,104 @@ class _HomeState extends State<Home> {
                                                 ),
                                               ),
                                             );
-                                          } else if (_name.text.isNotEmpty &&
-                                              _value.text.isEmpty &&
-                                              _selectedFrequency != 'none') {
+                                            return;
+                                          }
+
+                                          if (_value.text.isEmpty) {
                                             Navigator.pop(context);
                                             ScaffoldMessenger.of(
                                               context,
                                             ).showSnackBar(
                                               SnackBar(
                                                 content: Text(
-                                                  'Frequency value cannot be 0 $_selectedFrequency',
+                                                  'Frequency value cannot be empty',
                                                 ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          final frequencyValue = int.tryParse(
+                                            _value.text,
+                                          );
+                                          if (frequencyValue == null ||
+                                              frequencyValue <= 0) {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Frequency value must be a positive number',
+                                                ),
+                                              ),
+                                            );
+                                            return;
+                                          }
+
+                                          // if (_name.text.isEmpty) {
+                                          //   Navigator.pop(context);
+                                          //   ScaffoldMessenger.of(
+                                          //     context,
+                                          //   ).showSnackBar(
+                                          //     SnackBar(
+                                          //       content: Text(
+                                          //         'The habit name must not be empty',
+                                          //       ),
+                                          //     ),
+                                          //   );
+                                          // } else if (_name.text.isNotEmpty &&
+                                          //     _value.text.isNotEmpty &&
+                                          //     _selectedFrequency == 'none') {
+                                          //   Navigator.pop(context);
+                                          //   ScaffoldMessenger.of(
+                                          //     context,
+                                          //   ).showSnackBar(
+                                          //     SnackBar(
+                                          //       content: Text(
+                                          //         'Frequency unit cannot be none',
+                                          //       ),
+                                          //     ),
+                                          //   );
+                                          // } else if (_name.text.isNotEmpty &&
+                                          //     _value.text.isEmpty &&
+                                          //     _selectedFrequency != 'none') {
+                                          //   Navigator.pop(context);
+                                          //   ScaffoldMessenger.of(
+                                          //     context,
+                                          //   ).showSnackBar(
+                                          //     SnackBar(
+                                          //       content: Text(
+                                          //         'Frequency value cannot be 0 $_selectedFrequency',
+                                          //       ),
+                                          //     ),
+                                          //   );
+                                          // } 
+                                          
+                                          else if(_name.text.isNotEmpty && (_value.text.isEmpty || _selectedFrequency == 'none')){
+                                            context.read<HomeBloc>().add(
+                                              AddHabit(
+                                                habitName: _name.text,
+                                                frequencyValue: int.parse(
+                                                  _value.text,
+                                                ),
+                                                frequencyUnit:
+                                                    _selectedFrequency,
+                                                achievedValue: 0,
+                                              ),
+                                            );
+                                          }
+                                          
+                                          else {
+                                            context.read<HomeBloc>().add(
+                                              AddHabit(
+                                                habitName: _name.text,
+                                                frequencyValue: int.parse(
+                                                  _value.text,
+                                                ),
+                                                frequencyUnit:
+                                                    _selectedFrequency,
+                                                achievedValue: 0,
                                               ),
                                             );
                                           }

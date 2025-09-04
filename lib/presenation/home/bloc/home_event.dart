@@ -27,3 +27,5 @@ final class AddHabit extends HomeEvent {
     achievedValue,
   ];
 }
+
+final class ListHabits extends HomeEvent {}
