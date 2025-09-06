@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sizer/sizer.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
+import 'package:task_flow/model/habits.dart';
 import 'package:task_flow/presenation/history/history.dart';
 import 'package:task_flow/presenation/home/bloc/home_bloc.dart';
+import 'package:task_flow/presenation/home/home_controller/home_notifier.dart';
+import 'package:task_flow/presenation/home/home_repository/home_repository.dart';
 import 'package:task_flow/presenation/settings/settings.dart';
 import 'package:task_flow/presenation/stats/stats.dart';
 import 'package:task_flow/presenation/today/today.dart';
@@ -18,16 +23,16 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   final List _body = [Today(), Stats(), History(), Settings()];
   final List<String> _frequency = [
-    'none',
-    'hours per day',
     'times per day',
+    'hours per day',
+
     'days per week',
   ];
   int _index = 0;
-  String _selectedFrequency = 'none';
+  String _selectedFrequency = 'times per day';
   final TextEditingController _habitNameController = TextEditingController();
   TextEditingController _name = TextEditingController();
-  TextEditingController _value = TextEditingController();
+  TextEditingController _value = TextEditingController(text: '1');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -131,6 +136,7 @@ class _HomeState extends State<Home> {
                                       context,
                                     ).textTheme.bodyMedium!,
                                   ),
+
                                   SizedBox(height: 2.sh),
                                   Row(
                                     children: [
@@ -207,30 +213,42 @@ class _HomeState extends State<Home> {
                                     ],
                                   ),
                                   SizedBox(height: 2.sh),
-                                  BlocConsumer<HomeBloc, HomeState>(
-                                    listener: (context, state) {
-                                      // TODO: implement listener
-                                    },
-                                    builder: (context, state) {
-                                      if (state is AddHabitLoading) {
-                                        return ElevatedButton(
-                                          onPressed: () {},
-                                          style: ElevatedButton.styleFrom(
-                                            minimumSize: Size(100.w, 6.h),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(2.sh),
-                                            ),
-                                            backgroundColor: Colors.grey,
-                                          ),
-                                          child:
-                                              CircularProgressIndicator.adaptive(
-                                                backgroundColor: Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
+                                  Consumer(
+                                    builder: (context, ref, child) {
+                                      final state = ref.watch(homeProvder);
+
+                                      ref.listen(homeProvder, (previous, next) {
+                                        next.whenOrNull(
+                                          data: (data) {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'Habit has been addedd successfully',
+                                                ),
                                               ),
+                                            );
+                                            _name.clear();
+                                            _value.text = '1';
+                                            _selectedFrequency =
+                                                'times per day';
+                                          },
+                                          error: (error, stackTrace) {
+                                            Navigator.pop(context);
+                                            ScaffoldMessenger.of(
+                                              context,
+                                            ).showSnackBar(
+                                              SnackBar(
+                                                content: Text(
+                                                  'An error occured: $error',
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         );
-                                      }
+                                      });
 
                                       return ElevatedButton(
                                         onPressed: () {
@@ -246,119 +264,18 @@ class _HomeState extends State<Home> {
                                               ),
                                             );
                                             return;
-                                          }
-
-                                          if (_selectedFrequency == 'none') {
-                                            Navigator.pop(context);
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Frequency unit cannot be none',
-                                                ),
+                                          } else {
+                                            Habits habits = Habits(
+                                              habitName: _name.text,
+                                              frequencyValue: int.parse(
+                                                _value.text,
                                               ),
+                                              frequencyUnit: _selectedFrequency,
+                                              achievedValue: 0,
                                             );
-                                            return;
-                                          }
-
-                                          if (_value.text.isEmpty) {
-                                            Navigator.pop(context);
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Frequency value cannot be empty',
-                                                ),
-                                              ),
-                                            );
-                                            return;
-                                          }
-
-                                          final frequencyValue = int.tryParse(
-                                            _value.text,
-                                          );
-                                          if (frequencyValue == null ||
-                                              frequencyValue <= 0) {
-                                            Navigator.pop(context);
-                                            ScaffoldMessenger.of(
-                                              context,
-                                            ).showSnackBar(
-                                              SnackBar(
-                                                content: Text(
-                                                  'Frequency value must be a positive number',
-                                                ),
-                                              ),
-                                            );
-                                            return;
-                                          }
-
-                                          // if (_name.text.isEmpty) {
-                                          //   Navigator.pop(context);
-                                          //   ScaffoldMessenger.of(
-                                          //     context,
-                                          //   ).showSnackBar(
-                                          //     SnackBar(
-                                          //       content: Text(
-                                          //         'The habit name must not be empty',
-                                          //       ),
-                                          //     ),
-                                          //   );
-                                          // } else if (_name.text.isNotEmpty &&
-                                          //     _value.text.isNotEmpty &&
-                                          //     _selectedFrequency == 'none') {
-                                          //   Navigator.pop(context);
-                                          //   ScaffoldMessenger.of(
-                                          //     context,
-                                          //   ).showSnackBar(
-                                          //     SnackBar(
-                                          //       content: Text(
-                                          //         'Frequency unit cannot be none',
-                                          //       ),
-                                          //     ),
-                                          //   );
-                                          // } else if (_name.text.isNotEmpty &&
-                                          //     _value.text.isEmpty &&
-                                          //     _selectedFrequency != 'none') {
-                                          //   Navigator.pop(context);
-                                          //   ScaffoldMessenger.of(
-                                          //     context,
-                                          //   ).showSnackBar(
-                                          //     SnackBar(
-                                          //       content: Text(
-                                          //         'Frequency value cannot be 0 $_selectedFrequency',
-                                          //       ),
-                                          //     ),
-                                          //   );
-                                          // } 
-                                          
-                                          else if(_name.text.isNotEmpty && (_value.text.isEmpty || _selectedFrequency == 'none')){
-                                            context.read<HomeBloc>().add(
-                                              AddHabit(
-                                                habitName: _name.text,
-                                                frequencyValue: int.parse(
-                                                  _value.text,
-                                                ),
-                                                frequencyUnit:
-                                                    _selectedFrequency,
-                                                achievedValue: 0,
-                                              ),
-                                            );
-                                          }
-                                          
-                                          else {
-                                            context.read<HomeBloc>().add(
-                                              AddHabit(
-                                                habitName: _name.text,
-                                                frequencyValue: int.parse(
-                                                  _value.text,
-                                                ),
-                                                frequencyUnit:
-                                                    _selectedFrequency,
-                                                achievedValue: 0,
-                                              ),
-                                            );
+                                            ref
+                                                .read(homeProvder.notifier)
+                                                .addHabit(habits);
                                           }
                                         },
                                         style: ElevatedButton.styleFrom(
@@ -368,19 +285,31 @@ class _HomeState extends State<Home> {
                                               2.sh,
                                             ),
                                           ),
-                                          backgroundColor: Theme.of(
-                                            context,
-                                          ).colorScheme.primary,
+                                          backgroundColor: state.when(
+                                            data: (data) => Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                            error: (error, stackTrace) => Colors
+                                                .red
+                                                .withValues(alpha: .4),
+                                            loading: () => Colors.grey,
+                                          ),
                                         ),
-                                        child: Text(
-                                          'ADD HABIT',
-                                          style: Theme.of(context)
-                                              .textTheme
-                                              .bodyMedium!
-                                              .copyWith(
-                                                color: Colors.white,
-                                                fontWeight: FontWeight.bold,
-                                              ),
+                                        child: state.when(
+                                          data: (data) => Text(
+                                            'ADD HABIT',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(
+                                                  color: Colors.white,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                          error: (error, stackTrace) =>
+                                              SizedBox.shrink(),
+                                          loading: () =>
+                                              CircularProgressIndicator.adaptive(),
                                         ),
                                       );
                                     },

@@ -60,6 +60,7 @@ class DatabaseHelper {
 
   Future deleteHabit(Habits habits, int index) async {
     Database db = await database;
+
     await db.delete('habits', where: 'id = ?', whereArgs: [index]);
   }
 }
