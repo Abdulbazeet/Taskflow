@@ -1,0 +1,15 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_flow/databsae/db.dart';
+import 'package:task_flow/model/habits.dart';
+
+final todayRepoProvider = Provider((ref) => TodayRepository());
+
+class TodayRepository {
+  final DatabaseHelper dbHelper = DatabaseHelper.instance;
+
+  Future listHabits() async {
+    final result = await dbHelper.getAllHbits();
+    List<Habits> habits = result;
+    return habits;
+  }
+}

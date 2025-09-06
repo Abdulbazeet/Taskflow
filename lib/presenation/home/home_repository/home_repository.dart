@@ -27,9 +27,5 @@ class HomeRepository {
     await dbHelper.addHabits(newHabits);
   }
 
-  Future listHabits() async {
-    final result = await dbHelper.getAllHbits();
-    List<Habits> habits = result;
-    return habits;
-  }
+
 }

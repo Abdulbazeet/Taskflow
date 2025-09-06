@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:task_flow/model/habits.dart';
 import 'package:task_flow/presenation/home/bloc/home_bloc.dart';
+import 'package:task_flow/presenation/today/today_notifier/today_notifier.dart';
 import 'package:task_flow/utils/utils.dart';
 
 class Today extends StatefulWidget {
@@ -17,16 +19,6 @@ class Today extends StatefulWidget {
 class _TodayState extends State<Today> {
   final now = DateFormat('EEEE d MMMM y').format(DateTime.now()).toString();
   DateTime selectedDay = DateTime.now();
-
-  @override
-  void initState() {
-    super.initState();
-    // Dispatch the ListHabits event when the screen is initialized
-    // Use a slight delay to ensure the context is available after the first frame
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      BlocProvider.of<HomeBloc>(context).add(ListHabits());
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,195 +117,213 @@ class _TodayState extends State<Today> {
               "Today's Tasks",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
-            BlocBuilder<HomeBloc, HomeState>(
-              builder: (context, state) {
-              
-                  if (state is HomeInitial) {
-                  // Load habits when first initializing
-                  WidgetsBinding.instance.addPostFrameCallback((_) {
-                    context.read<HomeBloc>().add(ListHabits());
-                  });
-                  return Center(child: CircularProgressIndicator());
-                }
-    
-                if (state is ListHabitEmpty) {
-                  return Center(child: Text('No Habit Added Yet'));
-                }
+            Consumer(
+              builder: (context, ref, child) {
+                final state = ref.watch(todayProvider);
+                return state.when(
+                  data: (data) {
+                    if (data.isEmpty) {
+                      return Center(
+                        child: Text("No tasks for today. Enjoy your day!"),
+                      );
+                    } else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
 
-                if (state is ListHabitsSuccess) {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: state.habits.length,
+                        itemBuilder: (context, index) {
+                          final habitItems = data;
 
-                    itemBuilder: (context, index) {
-                      final habitItems = state.habits;
+                          int currentRun = habitItems[index].achievedValue;
 
-                      int currentRun = habitItems[index].achievedValue;
-                      Color iconColor = Theme.of(context).colorScheme.primary;
-                      return StatefulBuilder(
-                        builder: (context, setState) {
-                          return Container(
-                            height: 15.sh,
-                            decoration: BoxDecoration(
-                              color: Theme.of(context).colorScheme.surface,
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return Container(
+                                height: 15.sh,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).colorScheme.surface,
 
-                              borderRadius: BorderRadius.circular(3.h),
-                            ),
-                            margin: EdgeInsets.symmetric(vertical: 1.sh),
-
-                            width: 100.w,
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 3.sw,
-                              vertical: 2.sh,
-                            ),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-
-                              children: [
-                                Text(
-                                  habitItems[index].habitName,
-                                  style: Theme.of(context).textTheme.bodyMedium,
+                                  borderRadius: BorderRadius.circular(3.h),
                                 ),
-                                SizedBox(height: 1.sh),
-                                Row(
+                                margin: EdgeInsets.symmetric(vertical: 1.sh),
+
+                                width: 100.w,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3.sw,
+                                  vertical: 2.sh,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+
                                   children: [
                                     Text(
-                                      'Completed: $currentRun / ${habitItems[index].frequencyValue} ${habitItems[index].frequencyUnit}',
+                                      habitItems[index].habitName,
                                       style: Theme.of(
                                         context,
-                                      ).textTheme.bodySmall,
+                                      ).textTheme.bodyMedium,
                                     ),
-                                    Spacer(),
+                                    SizedBox(height: 1.sh),
                                     Row(
                                       children: [
-                                        InkWell(
-                                          onTap: () {
-                                            if (currentRun == 0) {
-                                              setState(() {});
-                                            } else {
-                                              setState(() {
-                                                currentRun--;
-                                              });
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(0.5.h),
-                                            decoration: BoxDecoration(
-                                              color: currentRun < 1
-                                                  ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primary
-                                                        .withValues(alpha: .2)
-                                                  : Theme.of(
-                                                      context,
-                                                    ).colorScheme.primary,
-                                              borderRadius:
-                                                  BorderRadius.circular(1.sh),
-                                            ),
-
-                                            child: Icon(
-                                              Icons.remove,
-                                              size: 17.sp,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ),
-                                        SizedBox(width: 3.sw),
                                         Text(
-                                          currentRun.toString(),
+                                          'Completed: $currentRun / ${habitItems[index].frequencyValue} ${habitItems[index].frequencyUnit}',
                                           style: Theme.of(
                                             context,
-                                          ).textTheme.bodyMedium,
+                                          ).textTheme.bodySmall,
                                         ),
-                                        SizedBox(width: 3.sw),
-                                        InkWell(
-                                          onTap: () {
-                                            if (currentRun ==
-                                                habitItems[index]
-                                                    .frequencyValue) {
-                                              setState(() {});
-                                            } else {
-                                              setState(() {
-                                                currentRun++;
-                                              });
-                                            }
-                                          },
-                                          child: Container(
-                                            padding: EdgeInsets.all(0.5.h),
-                                            decoration: BoxDecoration(
-                                              color:
-                                                  currentRun ==
-                                                      habitItems[index]
-                                                          .frequencyValue
-                                                  ? Theme.of(context)
-                                                        .colorScheme
-                                                        .primary
-                                                        .withValues(alpha: .2)
-                                                  : Theme.of(
-                                                      context,
-                                                    ).colorScheme.primary,
-                                              borderRadius:
-                                                  BorderRadius.circular(1.sh),
-                                            ),
+                                        Spacer(),
+                                        Row(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                if (currentRun == 0) {
+                                                  setState(() {});
+                                                } else {
+                                                  setState(() {
+                                                    currentRun--;
+                                                  });
+                                                }
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(0.5.h),
+                                                decoration: BoxDecoration(
+                                                  color: currentRun < 1
+                                                      ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                            .withValues(
+                                                              alpha: .2,
+                                                            )
+                                                      : Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        1.sh,
+                                                      ),
+                                                ),
 
-                                            child: Icon(
-                                              Icons.add,
-                                              size: 17.sp,
-                                              color: Colors.white,
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  size: 17.sp,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
                                             ),
-                                          ),
+                                            SizedBox(width: 3.sw),
+                                            Text(
+                                              currentRun.toString(),
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                            ),
+                                            SizedBox(width: 3.sw),
+                                            InkWell(
+                                              onTap: () {
+                                                if (currentRun ==
+                                                    habitItems[index]
+                                                        .frequencyValue) {
+                                                  setState(() {});
+                                                } else {
+                                                  setState(() {
+                                                    currentRun++;
+                                                  });
+                                                }
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(0.5.h),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      currentRun ==
+                                                          habitItems[index]
+                                                              .frequencyValue
+                                                      ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                            .withValues(
+                                                              alpha: .2,
+                                                            )
+                                                      : Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        1.sh,
+                                                      ),
+                                                ),
+
+                                                child: Icon(
+                                                  Icons.add,
+                                                  size: 17.sp,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 1.sh),
+
+                                    Expanded(
+                                      child: LinearProgressIndicator(
+                                        borderRadius: BorderRadius.circular(
+                                          2.sh,
+                                        ),
+
+                                        value:
+                                            currentRun /
+                                            habitItems[index].frequencyValue,
+                                        backgroundColor: Colors.grey.shade300,
+                                        color:
+                                            currentRun ==
+                                                habitItems[index].frequencyValue
+                                            ? Colors.green
+                                            : Colors.blue,
+                                      ),
+                                    ),
+                                    SizedBox(height: 1.sh),
+
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Progress',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall,
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          '${((currentRun / habitItems[index].frequencyValue) * 100).floor()} %',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall,
                                         ),
                                       ],
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 1.sh),
-
-                                Expanded(
-                                  child: LinearProgressIndicator(
-                                    borderRadius: BorderRadius.circular(2.sh),
-
-                                    value:
-                                        currentRun /
-                                        habitItems[index].frequencyValue,
-                                    backgroundColor: Colors.grey.shade300,
-                                    color:
-                                        currentRun ==
-                                            habitItems[index].frequencyValue
-                                        ? Colors.green
-                                        : Colors.blue,
-                                  ),
-                                ),
-                                SizedBox(height: 1.sh),
-
-                                Row(
-                                  children: [
-                                    Text(
-                                      'Progress',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodySmall,
-                                    ),
-                                    Spacer(),
-                                    Text(
-                                      '${((currentRun / habitItems[index].frequencyValue) * 100).floor()} %',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodySmall,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
+                              );
+                            },
                           );
                         },
                       );
-                    },
-                  );
-                }
-                return SizedBox.shrink();
+                    }
+                  },
+                  error: (error, stackTrace) => Center(
+                    child: Text(
+                      '${error.toString()}, ${stackTrace.toString()}',
+                    ),
+                  ),
+                  loading: () => Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  ),
+                );
               },
             ),
           ],

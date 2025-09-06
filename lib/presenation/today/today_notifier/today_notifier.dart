@@ -1,0 +1,31 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:task_flow/model/habits.dart';
+import 'package:task_flow/presenation/today/today_repository/today_repository.dart';
+
+final todayProvider =
+    StateNotifierProvider<TodayNotifier, AsyncValue<List<Habits>>>((ref) {
+      final todayRepo = ref.watch(todayRepoProvider);
+      return TodayNotifier(todayRepository: todayRepo);
+    });
+
+class TodayNotifier extends StateNotifier<AsyncValue<List<Habits>>> {
+  final TodayRepository todayRepository;
+
+  TodayNotifier({required this.todayRepository})
+    : super(const AsyncValue.loading()) {
+    listHabits();
+  }
+  Future listHabits() async {
+    state = AsyncValue.loading();
+    try {
+      final habits = await todayRepository.listHabits();
+      if (habits != []) {
+        state = AsyncValue.data(habits);
+      } else {
+        state = AsyncValue.data([]);
+      }
+    } catch (e, st) {
+      state = AsyncValue.error(e.toString(), st);
+    }
+  }
+}
