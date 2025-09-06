@@ -1,7 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-
 class Habits {
   final String habitName;
   final int frequencyValue;
@@ -41,4 +40,20 @@ class Habits {
 
   factory Habits.fromJson(String source) =>
       Habits.fromMap(json.decode(source) as Map<String, dynamic>);
+
+  Habits copyWith({
+    String? habitName,
+    int? frequencyValue,
+    String? frequencyUnit,
+    int? achievedValue,
+    int? id,
+  }) {
+    return Habits(
+      habitName: habitName ?? this.habitName,
+      frequencyValue: frequencyValue ?? this.frequencyValue,
+      frequencyUnit: frequencyUnit ?? this.frequencyUnit,
+      achievedValue: achievedValue ?? this.achievedValue,
+      id: id ?? this.id,
+    );
+  }
 }

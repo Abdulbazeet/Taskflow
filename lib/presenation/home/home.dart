@@ -6,7 +6,6 @@ import 'package:sizer/sizer.dart';
 import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import 'package:task_flow/model/habits.dart';
 import 'package:task_flow/presenation/history/history.dart';
-import 'package:task_flow/presenation/home/bloc/home_bloc.dart';
 import 'package:task_flow/presenation/home/home_controller/home_notifier.dart';
 import 'package:task_flow/presenation/home/home_repository/home_repository.dart';
 import 'package:task_flow/presenation/settings/settings.dart';

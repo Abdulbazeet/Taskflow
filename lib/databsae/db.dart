@@ -48,19 +48,19 @@ class DatabaseHelper {
     );
   }
 
-  Future updateHabit(Habits habits, int index) async {
+  Future updateHabit(Habits habits) async {
     Database db = await database;
     await db.update(
       'habits',
       habits.toMap(),
       where: 'id = ?',
-      whereArgs: [index],
+      whereArgs: [habits.id],
     );
   }
 
-  Future deleteHabit(Habits habits, int index) async {
+  Future deleteHabit(Habits habits) async {
     Database db = await database;
 
-    await db.delete('habits', where: 'id = ?', whereArgs: [index]);
+    await db.delete('habits', where: 'id = ?', whereArgs: [habits.id]);
   }
 }

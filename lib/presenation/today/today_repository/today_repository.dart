@@ -12,4 +12,9 @@ class TodayRepository {
     List<Habits> habits = result;
     return habits;
   }
+
+  Future updateCount(Habits habits) async {
+    await dbHelper.updateHabit(habits);
+    return habits;
+  }
 }
