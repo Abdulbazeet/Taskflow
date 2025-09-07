@@ -114,13 +114,20 @@ class _TodayState extends State<Today> {
             ),
             SizedBox(height: 3.sh),
             Text(
-              "Today's Tasks",
+              "Today's Habits",
               style: Theme.of(context).textTheme.bodyMedium,
             ),
             Consumer(
               builder: (context, ref, child) {
                 final state = ref.watch(todayProvider);
-                return state.when(
+                final uncompletedHabits = state.whenData(
+                  (allHabits) => allHabits
+                      .where(
+                        (habit) => habit.achievedValue < habit.frequencyValue,
+                      )
+                      .toList(),
+                );
+                return uncompletedHabits.when(
                   data: (data) {
                     if (data.isEmpty) {
                       return Column(
@@ -128,7 +135,7 @@ class _TodayState extends State<Today> {
                         children: [
                           SizedBox(height: 20.sp),
                           Center(
-                            child: Text("No tasks for today. Enjoy your day!"),
+                            child: Text("No habits for today. Enjoy your day!"),
                           ),
                         ],
                       );
@@ -282,7 +289,6 @@ class _TodayState extends State<Today> {
                                               SizedBox(width: 3.sw),
                                               InkWell(
                                                 onTap: () {
-                                                
                                                   if (habitItems[index]
                                                           .frequencyValue >
                                                       currentRun) {
@@ -384,6 +390,272 @@ class _TodayState extends State<Today> {
                             );
                           },
                         ),
+                      );
+                    }
+                  },
+                  error: (error, stackTrace) => Center(
+                    child: Text(
+                      '${error.toString()}, ${stackTrace.toString()}',
+                    ),
+                  ),
+                  loading: () => Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      SizedBox(height: 20.sp),
+                      Center(child: CircularProgressIndicator()),
+                    ],
+                  ),
+                );
+              },
+            ),
+            SizedBox(height: 3.sh),
+            Text(
+              "Completed Habits",
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Consumer(
+              builder: (context, ref, child) {
+                final state = ref.watch(todayProvider);
+                final completed = state.whenData(
+                  (allHabits) => allHabits
+                      .where(
+                        (habit) => habit.achievedValue == habit.frequencyValue,
+                      )
+                      .toList(),
+                );
+                return completed.when(
+                  data: (data) {
+                    if (data.isEmpty) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          SizedBox(height: 20.sp),
+                          Center(child: Text("No completed Habits yet!")),
+                        ],
+                      );
+                    } else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
+                      
+                        itemBuilder: (context, index) {
+                          final habitItems = data;
+                      
+                          int currentRun = habitItems[index].achievedValue;
+                          var habit = habitItems[index];
+                      
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return Container(
+                                height: 15.sh,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.surface,
+                      
+                                  borderRadius: BorderRadius.circular(3.h),
+                                ),
+                                margin: EdgeInsets.symmetric(vertical: 1.sh),
+                      
+                                width: 100.w,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 3.sw,
+                                  vertical: 2.sh,
+                                ),
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.start,
+                      
+                                  children: [
+                                    Text(
+                                      habitItems[index].habitName,
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium,
+                                    ),
+                                    SizedBox(height: 1.sh),
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Completed: $currentRun / ${habitItems[index].frequencyValue} ${habitItems[index].frequencyUnit}',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall,
+                                        ),
+                                        Spacer(),
+                                        Row(
+                                          children: [
+                                            InkWell(
+                                              onTap: () {
+                                                // if (currentRun == 0) {
+                                                //   setState(() {});
+                                                // } else {
+                                                //   setState(() {
+                                                //     currentRun--;
+                                                //   });
+                                                // }
+                      
+                                                if (currentRun > 0) {
+                                                  final updatedHabit = habit
+                                                      .copyWith(
+                                                        achievedValue:
+                                                            habit
+                                                                .achievedValue -
+                                                            1,
+                                                      );
+                                                  ref
+                                                      .read(
+                                                        todayProvider
+                                                            .notifier,
+                                                      )
+                                                      .updateHabit(
+                                                        updatedHabit,
+                                                      );
+                                                }
+                                                // if(habitItems[index].achievedValue > 0){
+                      
+                                                // }
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(
+                                                  0.5.h,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: currentRun < 1
+                                                      ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                            .withValues(
+                                                              alpha: .2,
+                                                            )
+                                                      : Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        1.sh,
+                                                      ),
+                                                ),
+                      
+                                                child: Icon(
+                                                  Icons.remove,
+                                                  size: 17.sp,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(width: 3.sw),
+                                            Text(
+                                              currentRun.toString(),
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodyMedium,
+                                            ),
+                                            SizedBox(width: 3.sw),
+                                            InkWell(
+                                              onTap: () {
+                                                if (habitItems[index]
+                                                        .frequencyValue >
+                                                    currentRun) {
+                                                  final updatedHabit = habit
+                                                      .copyWith(
+                                                        achievedValue:
+                                                            habitItems[index]
+                                                                .achievedValue +
+                                                            1,
+                                                      );
+                                                  ref
+                                                      .read(
+                                                        todayProvider
+                                                            .notifier,
+                                                      )
+                                                      .updateHabit(
+                                                        updatedHabit,
+                                                      );
+                                                }
+                                              },
+                                              child: Container(
+                                                padding: EdgeInsets.all(
+                                                  0.5.h,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      currentRun ==
+                                                          habitItems[index]
+                                                              .frequencyValue
+                                                      ? Theme.of(context)
+                                                            .colorScheme
+                                                            .primary
+                                                            .withValues(
+                                                              alpha: .2,
+                                                            )
+                                                      : Theme.of(
+                                                          context,
+                                                        ).colorScheme.primary,
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                        1.sh,
+                                                      ),
+                                                ),
+                      
+                                                child: Icon(
+                                                  Icons.add,
+                                                  size: 17.sp,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(height: 1.sh),
+                      
+                                    Expanded(
+                                      child: LinearProgressIndicator(
+                                        borderRadius: BorderRadius.circular(
+                                          2.sh,
+                                        ),
+                      
+                                        value:
+                                            currentRun /
+                                            habitItems[index].frequencyValue,
+                                        backgroundColor: Colors.grey.shade300,
+                                        color:
+                                            currentRun ==
+                                                habitItems[index]
+                                                    .frequencyValue
+                                            ? Colors.green
+                                            : Colors.blue,
+                                      ),
+                                    ),
+                                    SizedBox(height: 1.sh),
+                      
+                                    Row(
+                                      children: [
+                                        Text(
+                                          'Progress',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall,
+                                        ),
+                                        Spacer(),
+                                        Text(
+                                          '${((currentRun / habitItems[index].frequencyValue) * 100).floor()} %',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodySmall,
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
                       );
                     }
                   },

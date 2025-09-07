@@ -30,11 +30,28 @@ class TodayNotifier extends StateNotifier<AsyncValue<List<Habits>>> {
   }
 
   Future updateHabit(Habits habit) async {
-   try {
+    try {
       await todayRepository.updateCount(habit);
       final habits = await todayRepository.listHabits();
-      state = AsyncValue.data(habits); 
-   } catch (e, st) {
-      state = AsyncValue.error(e.toString(), st);   }
+
+      state = AsyncValue.data(habits);
+    } catch (e, st) {
+      state = AsyncValue.error(e.toString(), st);
+    }
   }
+
+  // Future completedHabits() async {
+  //   // state = AsyncValue.loading();
+  //   // try {
+  //   //   final completedHabit = await todayRepository.completedHabits();
+  //   //   if (completedHabit != []) {
+  //   //     state = AsyncValue.data(completedHabit);
+  //   //   } else {
+  //   //     state = AsyncValue.data([]);
+  //   //   }
+  //   // } catch (e, st) {
+  //   //   state = AsyncValue.error(e.toString(), st);
+  //   // }
+  //   return state.valueOrNull.where((element) => ,).toList() ?? [];
+  // }
 }
