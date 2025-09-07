@@ -40,6 +40,17 @@ class TodayNotifier extends StateNotifier<AsyncValue<List<Habits>>> {
     }
   }
 
+  Future deleteHabit(Habits habits) async {
+    state = AsyncValue.loading();
+    try {
+      final delete = await todayRepository.deleteHabit(habits);
+      final listHabit = await todayRepository.listHabits();
+      state = AsyncValue.data(listHabit);
+    } catch (e, st) {
+      state = AsyncValue.error(e.toString(), st);
+    }
+  }
+
   // Future completedHabits() async {
   //   // state = AsyncValue.loading();
   //   // try {

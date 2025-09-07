@@ -7,6 +7,7 @@ class Habits {
   final String frequencyUnit;
   final int achievedValue;
   int? id;
+  final DateTime dateTime;
 
   Habits({
     required this.habitName,
@@ -14,6 +15,7 @@ class Habits {
     required this.frequencyUnit,
     required this.achievedValue,
     this.id,
+    required this.dateTime,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,16 +25,18 @@ class Habits {
       'frequencyUnit': frequencyUnit,
       'achievedValue': achievedValue,
       'id': id,
+      'dateTime': dateTime.millisecondsSinceEpoch,
     };
   }
 
   factory Habits.fromMap(Map<String, dynamic> map) {
     return Habits(
-      id: map['id'] as int,
       habitName: map['habitName'] as String,
       frequencyValue: map['frequencyValue'] as int,
       frequencyUnit: map['frequencyUnit'] as String,
       achievedValue: map['achievedValue'] as int,
+      id: map['id'] != null ? map['id'] as int : null,
+      dateTime: DateTime.fromMillisecondsSinceEpoch(map['dateTime'] as int),
     );
   }
 
@@ -47,6 +51,7 @@ class Habits {
     String? frequencyUnit,
     int? achievedValue,
     int? id,
+    DateTime? dateTime,
   }) {
     return Habits(
       habitName: habitName ?? this.habitName,
@@ -54,6 +59,7 @@ class Habits {
       frequencyUnit: frequencyUnit ?? this.frequencyUnit,
       achievedValue: achievedValue ?? this.achievedValue,
       id: id ?? this.id,
+      dateTime: dateTime ?? this.dateTime,
     );
   }
 }

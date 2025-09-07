@@ -29,9 +29,8 @@ class _HomeState extends State<Home> {
   ];
   int _index = 0;
   String _selectedFrequency = 'times per day';
-  final TextEditingController _habitNameController = TextEditingController();
-  TextEditingController _name = TextEditingController();
-  TextEditingController _value = TextEditingController(text: '1');
+  final TextEditingController _name = TextEditingController();
+  final TextEditingController _value = TextEditingController(text: '1');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,7 +44,7 @@ class _HomeState extends State<Home> {
           ),
           BottomBarItem(
             icon: Icon(Icons.calendar_today),
-            title: Text('Histoy'),
+            title: Text('History'),
           ),
           BottomBarItem(icon: Icon(Icons.settings), title: Text('Settings')),
         ],
@@ -265,6 +264,7 @@ class _HomeState extends State<Home> {
                                             return;
                                           } else {
                                             Habits habits = Habits(
+                                              dateTime: DateTime.now(),
                                               habitName: _name.text,
                                               frequencyValue: int.parse(
                                                 _value.text,

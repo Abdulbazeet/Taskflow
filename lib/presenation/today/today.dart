@@ -123,7 +123,7 @@ class _TodayState extends State<Today> {
                 final uncompletedHabits = state.whenData(
                   (allHabits) => allHabits
                       .where(
-                        (habit) => habit.achievedValue < habit.frequencyValue,
+                        (habit) => habit.achievedValue < habit.frequencyValue ,
                       )
                       .toList(),
                 );
@@ -135,50 +135,61 @@ class _TodayState extends State<Today> {
                         children: [
                           SizedBox(height: 20.sp),
                           Center(
-                            child: Text("No habits for today. Enjoy your day!"),
+                            child: Text(
+                              "No habits for today. Enjoy your day!",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
                           ),
                         ],
                       );
                     } else {
-                      return Slidable(
-                        direction: Axis.horizontal,
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
 
-                        endActionPane: ActionPane(
-                          extentRatio: .25,
-                          motion: const ScrollMotion(),
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  fixedSize: Size(8.sw, 8.sh),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadiusGeometry.circular(
-                                      3.sh,
+                        itemBuilder: (context, index) {
+                          final habitItems = data;
+
+                          int currentRun = habitItems[index].achievedValue;
+                          var habit = habitItems[index];
+
+                          return Slidable(
+                            direction: Axis.horizontal,
+
+                            endActionPane: ActionPane(
+                              extentRatio: .25,
+                              motion: const ScrollMotion(),
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: ElevatedButton(
+                                    onPressed: () {
+                                      final habits = habit.copyWith(
+                                        id: habit.id,
+                                      );
+                                      ref
+                                          .read(todayProvider.notifier)
+                                          .deleteHabit(habits);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      fixedSize: Size(8.sw, 8.sh),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadiusGeometry.circular(3.sh),
+                                      ),
+                                    ),
+
+                                    child: Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),
-
-                                child: Icon(Icons.delete, color: Colors.white),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: NeverScrollableScrollPhysics(),
-                          itemCount: data.length,
-
-                          itemBuilder: (context, index) {
-                            final habitItems = data;
-
-                            int currentRun = habitItems[index].achievedValue;
-                            var habit = habitItems[index];
-
-                            return StatefulBuilder(
+                            child: StatefulBuilder(
                               builder: (context, setState) {
                                 return Container(
                                   height: 15.sh,
@@ -360,7 +371,9 @@ class _TodayState extends State<Today> {
                                               currentRun ==
                                                   habitItems[index]
                                                       .frequencyValue
-                                              ? Colors.green
+                                              ? Theme.of(
+                                                  context,
+                                                ).colorScheme.primary
                                               : Colors.blue,
                                         ),
                                       ),
@@ -387,9 +400,9 @@ class _TodayState extends State<Today> {
                                   ),
                                 );
                               },
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       );
                     }
                   },
@@ -430,7 +443,12 @@ class _TodayState extends State<Today> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           SizedBox(height: 20.sp),
-                          Center(child: Text("No completed Habits yet!")),
+                          Center(
+                            child: Text(
+                              "No completed Habits yet!",
+                              style: Theme.of(context).textTheme.bodySmall,
+                            ),
+                          ),
                         ],
                       );
                     } else {
@@ -438,26 +456,24 @@ class _TodayState extends State<Today> {
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
                         itemCount: data.length,
-                      
+
                         itemBuilder: (context, index) {
                           final habitItems = data;
-                      
+
                           int currentRun = habitItems[index].achievedValue;
                           var habit = habitItems[index];
-                      
+
                           return StatefulBuilder(
                             builder: (context, setState) {
                               return Container(
                                 height: 15.sh,
                                 decoration: BoxDecoration(
-                                  color: Theme.of(
-                                    context,
-                                  ).colorScheme.surface,
-                      
+                                  color: Theme.of(context).colorScheme.surface,
+
                                   borderRadius: BorderRadius.circular(3.h),
                                 ),
                                 margin: EdgeInsets.symmetric(vertical: 1.sh),
-                      
+
                                 width: 100.w,
                                 padding: EdgeInsets.symmetric(
                                   horizontal: 3.sw,
@@ -465,9 +481,8 @@ class _TodayState extends State<Today> {
                                 ),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment:
-                                      CrossAxisAlignment.start,
-                      
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+
                                   children: [
                                     Text(
                                       habitItems[index].habitName,
@@ -496,7 +511,7 @@ class _TodayState extends State<Today> {
                                                 //     currentRun--;
                                                 //   });
                                                 // }
-                      
+
                                                 if (currentRun > 0) {
                                                   final updatedHabit = habit
                                                       .copyWith(
@@ -507,21 +522,18 @@ class _TodayState extends State<Today> {
                                                       );
                                                   ref
                                                       .read(
-                                                        todayProvider
-                                                            .notifier,
+                                                        todayProvider.notifier,
                                                       )
                                                       .updateHabit(
                                                         updatedHabit,
                                                       );
                                                 }
                                                 // if(habitItems[index].achievedValue > 0){
-                      
+
                                                 // }
                                               },
                                               child: Container(
-                                                padding: EdgeInsets.all(
-                                                  0.5.h,
-                                                ),
+                                                padding: EdgeInsets.all(0.5.h),
                                                 decoration: BoxDecoration(
                                                   color: currentRun < 1
                                                       ? Theme.of(context)
@@ -538,7 +550,7 @@ class _TodayState extends State<Today> {
                                                         1.sh,
                                                       ),
                                                 ),
-                      
+
                                                 child: Icon(
                                                   Icons.remove,
                                                   size: 17.sp,
@@ -568,8 +580,7 @@ class _TodayState extends State<Today> {
                                                       );
                                                   ref
                                                       .read(
-                                                        todayProvider
-                                                            .notifier,
+                                                        todayProvider.notifier,
                                                       )
                                                       .updateHabit(
                                                         updatedHabit,
@@ -577,9 +588,7 @@ class _TodayState extends State<Today> {
                                                 }
                                               },
                                               child: Container(
-                                                padding: EdgeInsets.all(
-                                                  0.5.h,
-                                                ),
+                                                padding: EdgeInsets.all(0.5.h),
                                                 decoration: BoxDecoration(
                                                   color:
                                                       currentRun ==
@@ -599,7 +608,7 @@ class _TodayState extends State<Today> {
                                                         1.sh,
                                                       ),
                                                 ),
-                      
+
                                                 child: Icon(
                                                   Icons.add,
                                                   size: 17.sp,
@@ -612,27 +621,28 @@ class _TodayState extends State<Today> {
                                       ],
                                     ),
                                     SizedBox(height: 1.sh),
-                      
+
                                     Expanded(
                                       child: LinearProgressIndicator(
                                         borderRadius: BorderRadius.circular(
                                           2.sh,
                                         ),
-                      
+
                                         value:
                                             currentRun /
                                             habitItems[index].frequencyValue,
                                         backgroundColor: Colors.grey.shade300,
                                         color:
                                             currentRun ==
-                                                habitItems[index]
-                                                    .frequencyValue
-                                            ? Colors.green
+                                                habitItems[index].frequencyValue
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.primary
                                             : Colors.blue,
                                       ),
                                     ),
                                     SizedBox(height: 1.sh),
-                      
+
                                     Row(
                                       children: [
                                         Text(

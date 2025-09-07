@@ -18,10 +18,7 @@ class TodayRepository {
     return habits;
   }
 
-  // Future completedHabits() async {
-  //   List<Habits> habits = await listHabits();
-  //   return habits
-  //       .where((element) => element.achievedValue == element.frequencyValue)
-  //       .toList();
-  // }
+  Future deleteHabit(Habits habits) async {
+    await dbHelper.deleteHabit(habits);
+  }
 }

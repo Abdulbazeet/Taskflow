@@ -30,7 +30,8 @@ class DatabaseHelper {
       habitName $textType,
       frequencyValue $intType,
       frequencyUnit $textType,
-      achievedValue $intType
+      achievedValue $intType,
+      dateTime $intType
     )''');
   }
 
