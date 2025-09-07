@@ -41,6 +41,15 @@ class _HomeState extends State<Home> {
   final TextEditingController _name = TextEditingController();
   final TextEditingController _value = TextEditingController(text: '1');
   final startDate = DateFormat('MMM d, yyyy').format(DateTime.now()).toString();
+  // endDate(DateTime? end) {
+  //   if (end != null) {
+  //     return DateFormat('MMM d, yyyy').format(end).toString();
+  //   } else {
+  //     return DateFormat('MMM d, yyyy').format(DateTime.now()).toString();
+  //   }
+  // }
+  DateTime? _endPickedDate;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -249,6 +258,7 @@ class _HomeState extends State<Home> {
                                           context,
                                         ).textTheme.bodyMedium,
                                       ),
+                                      Spacer(),
                                       _selectedEndDate == 'After days' ||
                                               _selectedEndDate == 'After weeks'
                                           ? SizedBox(
@@ -289,6 +299,66 @@ class _HomeState extends State<Home> {
                                               ),
                                             )
                                           : SizedBox.shrink(),
+                                      _selectedEndDate == "Specific date"
+                                          ? _endPickedDate == null
+                                                ? Text(
+                                                    DateFormat('MMM d, yyyy')
+                                                        .format(DateTime.now())
+                                                        .toString(),
+                                                    style: Theme.of(
+                                                      context,
+                                                    ).textTheme.bodySmall,
+                                                  )
+                                                : Text(
+                                                    DateFormat('MMM d, yyyy')
+                                                        .format(_endPickedDate!)
+                                                        .toString(),
+                                                    style: Theme.of(
+                                                      context,
+                                                    ).textTheme.bodySmall,
+                                                  )
+                                          : SizedBox.shrink(),
+                                      SizedBox(width: 3.sw),
+                                      _selectedEndDate == "Specific date"
+                                          ? ElevatedButton(
+                                              onPressed: () async {
+                                                DateTime? pickedDate =
+                                                    await showDatePicker(
+                                                      context: context,
+                                                      firstDate: DateTime(1600),
+                                                      lastDate: DateTime(2900),
+                                                    );
+                                                setState(() {
+                                                  _endPickedDate = pickedDate;
+                                                });
+                                              },
+                                              style: ElevatedButton.styleFrom(
+                                                backgroundColor:
+                                                    Theme.of(context)
+                                                        .colorScheme
+                                                        .primary
+                                                        .withValues(alpha: .3),
+                                                padding: EdgeInsets.all(1.sh),
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadiusGeometry.circular(
+                                                        1.sh,
+                                                      ),
+                                                ),
+                                              ),
+                                              child: Text(
+                                                'Choose date',
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .titleSmall!
+                                                    .copyWith(
+                                                      color: Colors.white,
+                                                    ),
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+
+                                      SizedBox(width: 3.sw),
                                       DropdownButton<String>(
                                         value: _selectedEndDate,
                                         items: _endDate
@@ -313,6 +383,7 @@ class _HomeState extends State<Home> {
                                       ),
                                     ],
                                   ),
+
                                   SizedBox(height: 2.sh),
                                   Consumer(
                                     builder: (context, ref, child) {
