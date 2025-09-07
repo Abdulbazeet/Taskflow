@@ -8,6 +8,8 @@ class Habits {
   final int achievedValue;
   int? id;
   final DateTime dateTime;
+  // final DateTime? endTime;
+  // fial 
 
   Habits({
     required this.habitName,

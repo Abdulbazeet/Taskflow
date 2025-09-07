@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
@@ -8,7 +7,6 @@ import 'package:stylish_bottom_bar/stylish_bottom_bar.dart';
 import 'package:task_flow/model/habits.dart';
 import 'package:task_flow/presenation/history/history.dart';
 import 'package:task_flow/presenation/home/home_controller/home_notifier.dart';
-import 'package:task_flow/presenation/home/home_repository/home_repository.dart';
 import 'package:task_flow/presenation/settings/settings.dart';
 import 'package:task_flow/presenation/stats/stats.dart';
 import 'package:task_flow/presenation/today/today.dart';
@@ -22,32 +20,35 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final List _body = [Today(), Stats(), History(), Settings()];
-  final List<String> _frequency = [
-    'times per day',
-    'hours per day',
-
-    'days per week',
+  final List<String> _repeatMode = [
+    'Every day',
+    'Certain days',
+    'Every certain days',
   ];
+  final List<String> _frequency = ['Times per day', 'Hours per day'];
+  String _repeat = 'Every day';
+  List<String> _days_of_the_week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   final List<String> _endDate = [
     'Never',
     'After days',
     'After weeks',
     'Specific date',
   ];
+
   String _selectedEndDate = 'Never';
+  List<int> _daysIndex = [];
+  TimeOfDay? _chosenTIme;
 
   int _index = 0;
   String _selectedFrequency = 'times per day';
   final TextEditingController _name = TextEditingController();
+  final TextEditingController _repeatText = TextEditingController();
   final TextEditingController _value = TextEditingController(text: '1');
+  final TextEditingController _valueFrequency = TextEditingController(
+    text: '1',
+  );
   final startDate = DateFormat('MMM d, yyyy').format(DateTime.now()).toString();
-  // endDate(DateTime? end) {
-  //   if (end != null) {
-  //     return DateFormat('MMM d, yyyy').format(end).toString();
-  //   } else {
-  //     return DateFormat('MMM d, yyyy').format(DateTime.now()).toString();
-  //   }
-  // }
+
   DateTime? _endPickedDate;
 
   @override
@@ -155,80 +156,7 @@ class _HomeState extends State<Home> {
                                   ),
 
                                   SizedBox(height: 2.sh),
-                                  // Row(
-                                  //   children: [
-                                  //     Text(
-                                  //       'Add frequency',
-                                  //       style: Theme.of(
-                                  //         context,
-                                  //       ).textTheme.bodyMedium,
-                                  //     ),
-                                  //     Spacer(),
 
-                                  //     SizedBox(
-                                  //       width: 8.sw,
-                                  //       child: TextField(
-                                  //         controller: _value,
-                                  //         textAlign: TextAlign.center,
-                                  //         decoration: InputDecoration(
-                                  //           hintStyle: Theme.of(context)
-                                  //               .textTheme
-                                  //               .bodyMedium!
-                                  //               .copyWith(
-                                  //                 color: Colors.grey,
-                                  //                 fontWeight: FontWeight.normal,
-                                  //               ),
-
-                                  //           enabledBorder: UnderlineInputBorder(
-                                  //             borderSide: BorderSide(
-                                  //               color: Theme.of(
-                                  //                 context,
-                                  //               ).colorScheme.primary,
-                                  //             ),
-                                  //           ),
-                                  //           border: UnderlineInputBorder(
-                                  //             borderSide: BorderSide(
-                                  //               color: Theme.of(
-                                  //                 context,
-                                  //               ).colorScheme.primary,
-                                  //             ),
-                                  //           ),
-                                  //           hintText: '0',
-                                  //         ),
-                                  //         style: Theme.of(
-                                  //           context,
-                                  //         ).textTheme.bodyMedium!,
-                                  //       ),
-                                  //     ),
-                                  //     SizedBox(width: 4.sw),
-                                  //     DropdownButton<String>(
-                                  //       items: _frequency
-                                  //           .map(
-                                  //             (e) => DropdownMenuItem<String>(
-                                  //               value: e,
-                                  //               child: Text(
-                                  //                 e,
-                                  //                 style: Theme.of(context)
-                                  //                     .textTheme
-                                  //                     .bodySmall!
-                                  //                     .copyWith(
-                                  //                       fontWeight:
-                                  //                           FontWeight.bold,
-                                  //                     ),
-                                  //               ),
-                                  //             ),
-                                  //           )
-                                  //           .toList(),
-                                  //       onChanged: (value) {
-                                  //         setState(() {
-                                  //           _selectedFrequency = value!;
-                                  //         });
-                                  //       },
-                                  //       value: _selectedFrequency,
-                                  //       underline: SizedBox.shrink(),
-                                  //     ),
-                                  //   ],
-                                  // ),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -361,6 +289,10 @@ class _HomeState extends State<Home> {
                                       SizedBox(width: 3.sw),
                                       DropdownButton<String>(
                                         value: _selectedEndDate,
+                                        alignment:
+                                            AlignmentGeometry.centerRight,
+                                        isExpanded: false,
+                                        isDense: true,
                                         items: _endDate
                                             .map(
                                               (e) => DropdownMenuItem<String>(
@@ -377,6 +309,332 @@ class _HomeState extends State<Home> {
                                         onChanged: (value) {
                                           setState(() {
                                             _selectedEndDate = value!;
+                                          });
+                                        },
+                                        underline: SizedBox.shrink(),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 2.sh),
+                                  _chosenTIme != null
+                                      ? Container(
+                                          width: double.infinity,
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: 3.sw,
+                                            vertical: 2.sh,
+                                          ),
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.circular(
+                                              2.sw,
+                                            ),
+                                            color: Theme.of(context)
+                                                .colorScheme
+                                                .primary
+                                                .withValues(alpha: .3),
+                                          ),
+
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                MaterialLocalizations.of(
+                                                  context,
+                                                ).formatTimeOfDay(
+                                                  _chosenTIme!,
+                                                  alwaysUse24HourFormat:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).alwaysUse24HourFormat,
+                                                ),
+                                                style: Theme.of(context)
+                                                    .textTheme
+                                                    .bodyMedium!
+                                                    .copyWith(
+                                                      fontWeight:
+                                                          FontWeight.normal,
+                                                    ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    _chosenTIme = null;
+                                                  });
+                                                },
+                                                child: Icon(Icons.close),
+                                              ),
+                                            ],
+                                          ),
+                                        )
+                                      : SizedBox.shrink(),
+                                  _chosenTIme != null
+                                      ? SizedBox(height: 2.sh)
+                                      : SizedBox.shrink(),
+
+                                  InkWell(
+                                    onTap: () async {
+                                      TimeOfDay?
+                                      pickedTime = await showTimePicker(
+                                        context: context,
+                                        initialTime: TimeOfDay.now(),
+                                        initialEntryMode:
+                                            TimePickerEntryMode.input,
+                                        builder: (context, child) {
+                                          return MediaQuery(
+                                            data: MediaQuery.of(context)
+                                                .copyWith(
+                                                  alwaysUse24HourFormat:
+                                                      MediaQuery.of(
+                                                        context,
+                                                      ).alwaysUse24HourFormat,
+                                                ),
+                                            child: child!,
+                                          );
+                                        },
+                                      );
+                                      setState(() {
+                                        _chosenTIme = pickedTime;
+                                      });
+                                    },
+                                    child: Text(
+                                      'Set Reminder',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodyMedium!
+                                          .copyWith(
+                                            color: Theme.of(
+                                              context,
+                                            ).colorScheme.primary,
+                                          ),
+                                    ),
+                                  ),
+                                  SizedBox(height: 2.sh),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        'Add frequency',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                      Spacer(),
+
+                                      SizedBox(
+                                        width: 8.sw,
+                                        child: TextField(
+                                          controller: _valueFrequency,
+                                          textAlign: TextAlign.center,
+                                          decoration: InputDecoration(
+                                            hintStyle: Theme.of(context)
+                                                .textTheme
+                                                .bodyMedium!
+                                                .copyWith(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                            ),
+                                            border: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                            ),
+                                            hintText: '0',
+                                          ),
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium!,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4.sw),
+                                      DropdownButton<String>(
+                                        items: _frequency
+                                            .map(
+                                              (e) => DropdownMenuItem<String>(
+                                                value: e,
+                                                child: Text(
+                                                  e,
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedFrequency = value!;
+                                          });
+                                        },
+                                        value: _selectedFrequency,
+                                        underline: SizedBox.shrink(),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 2.sh),
+
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Repeat',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+
+                                      SizedBox(width: 3.sw),
+
+                                      _repeat == 'Certain days'
+                                          ? Expanded(
+                                              child: SingleChildScrollView(
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                child: Row(
+                                                  children: List.generate(7, (
+                                                    index,
+                                                  ) {
+                                                    return InkWell(
+                                                      onTap: () {
+                                                        if (_daysIndex.contains(
+                                                          index,
+                                                        )) {
+                                                          setState(() {
+                                                            _daysIndex.remove(
+                                                              index,
+                                                            );
+                                                          });
+                                                        } else {
+                                                          setState(() {
+                                                            _daysIndex.add(
+                                                              index,
+                                                            );
+                                                          });
+                                                        }
+                                                      },
+                                                      child: Container(
+                                                        margin: EdgeInsets.all(
+                                                          .3.sw,
+                                                        ),
+                                                        padding: EdgeInsets.all(
+                                                          3.5.sw,
+                                                        ),
+                                                        decoration: BoxDecoration(
+                                                          color:
+                                                              _daysIndex
+                                                                  .contains(
+                                                                    index,
+                                                                  )
+                                                              ? Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .colorScheme
+                                                                    .primary
+                                                              : Colors.white,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                          border:
+                                                              !(_daysIndex
+                                                                  .contains(
+                                                                    index,
+                                                                  ))
+                                                              ? Border.all(
+                                                                  color: Theme.of(
+                                                                    context,
+                                                                  ).colorScheme.primary,
+                                                                )
+                                                              : null,
+                                                        ),
+                                                        child: Text(
+                                                          _days_of_the_week[index],
+                                                          style:
+                                                              Theme.of(context)
+                                                                  .textTheme
+                                                                  .titleSmall,
+                                                        ),
+                                                      ),
+                                                    );
+                                                  }),
+                                                ),
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+                                      _repeat == 'Every certain days'
+                                          ? SizedBox(
+                                              width: 8.sw,
+                                              child: TextField(
+                                                controller: _repeatText,
+                                                textAlign: TextAlign.center,
+                                                decoration: InputDecoration(
+                                                  hintStyle: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall!
+                                                      .copyWith(
+                                                        color: Colors.grey,
+                                                        fontWeight:
+                                                            FontWeight.normal,
+                                                      ),
+
+                                                  enabledBorder:
+                                                      UnderlineInputBorder(
+                                                        borderSide: BorderSide(
+                                                          color: Theme.of(
+                                                            context,
+                                                          ).colorScheme.primary,
+                                                        ),
+                                                      ),
+                                                  border: UnderlineInputBorder(
+                                                    borderSide: BorderSide(
+                                                      color: Theme.of(
+                                                        context,
+                                                      ).colorScheme.primary,
+                                                    ),
+                                                  ),
+                                                  hintText: '0',
+                                                ),
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.titleSmall!,
+                                              ),
+                                            )
+                                          : SizedBox.shrink(),
+
+                                      DropdownButton<String>(
+                                        isExpanded: false,
+                                        isDense: true,
+                                        padding: EdgeInsets.all(0),
+                                        value: _repeat,
+                                        alignment:
+                                            AlignmentGeometry.centerRight,
+                                        items: _repeatMode
+                                            .map(
+                                              (e) => DropdownMenuItem<String>(
+                                                value: e,
+                                                child: Text(
+                                                  e,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodySmall,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _repeat = value!;
                                           });
                                         },
                                         underline: SizedBox.shrink(),
