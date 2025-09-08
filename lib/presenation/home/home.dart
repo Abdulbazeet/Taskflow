@@ -84,6 +84,13 @@ class _HomeState extends State<Home> {
           ? FloatingActionButton(
               onPressed: () {
                 showModalBottomSheet(
+                  isScrollControlled: true,
+                  sheetAnimationStyle: AnimationStyle(
+                    curve: ElasticInCurve(),
+                    duration: Duration(seconds: 1),
+                  ),
+
+                  showDragHandle: true,
                   enableDrag: true,
                   context: context,
 
@@ -409,77 +416,37 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                   SizedBox(height: 2.sh),
+                                  Text(
+                                    'Frequency',
+                                    style: Theme.of(
+                                      context,
+                                    ).textTheme.bodyMedium,
+                                  ),
+                                  SizedBox(height: 2.sh),
                                   Row(
                                     children: [
-                                      Text(
-                                        'Add frequency',
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.bodyMedium,
-                                      ),
-                                      Spacer(),
+                                      Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 3.sw,
+                                          vertical: 2.sh,
+                                        ),
 
-                                      SizedBox(
-                                        width: 8.sw,
-                                        child: TextField(
-                                          controller: _valueFrequency,
-                                          textAlign: TextAlign.center,
-                                          decoration: InputDecoration(
-                                            hintStyle: Theme.of(context)
-                                                .textTheme
-                                                .bodyMedium!
-                                                .copyWith(
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.normal,
-                                                ),
-
-                                            enabledBorder: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                              ),
-                                            ),
-                                            border: UnderlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: Theme.of(
-                                                  context,
-                                                ).colorScheme.primary,
-                                              ),
-                                            ),
-                                            hintText: '0',
+                                        decoration: BoxDecoration(
+                                          borderRadius: BorderRadius.circular(
+                                            3.sw,
                                           ),
+                                          shape: BoxShape.rectangle,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .primary
+                                              .withValues(alpha: .3),
+                                        ),
+                                        child: Text(
+                                          'Times per day',
                                           style: Theme.of(
                                             context,
-                                          ).textTheme.bodyMedium!,
+                                          ).textTheme.titleSmall,
                                         ),
-                                      ),
-                                      SizedBox(width: 4.sw),
-                                      DropdownButton<String>(
-                                        items: _frequency
-                                            .map(
-                                              (e) => DropdownMenuItem<String>(
-                                                value: e,
-                                                child: Text(
-                                                  e,
-                                                  style: Theme.of(context)
-                                                      .textTheme
-                                                      .bodySmall!
-                                                      .copyWith(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                ),
-                                              ),
-                                            )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _selectedFrequency = value!;
-                                          });
-                                        },
-                                        value: _selectedFrequency,
-                                        underline: SizedBox.shrink(),
                                       ),
                                     ],
                                   ),
