@@ -21,7 +21,14 @@ class HomeNotifier extends StateNotifier<AsyncValue<void>> {
     state = AsyncValue.loading();
     try {
       await homeRepository.addHabits(
-        dateTime: habits.dateTime,
+        endPeriod: habits.endPeriod,
+        endPeriodValue: habits.endPeriodValue,
+        endTime: habits.endTime,
+        reminderTime: habits.reminderTime,
+        repeatDays: habits.repeatDays,
+        repeatMode: habits.repeatMode,
+        repeatPattern: habits.repeatPattern,
+        startDateTime: habits.startDateTime,
         habitName: habits.habitName,
         frequencyValue: habits.frequencyValue,
         frequencyUnit: habits.frequencyUnit,

@@ -27,11 +27,19 @@ class DatabaseHelper {
     await db.execute('''
     CREATE TABLE habits (
       id $idType,
-      habitName $textType,
-      frequencyValue $intType,
-      frequencyUnit $textType,
-      achievedValue $intType,
-      dateTime $intType
+      habitName $textType NOT NULL,
+      frequencyValue $intType NOT NULL,
+      frequencyUnit $textType NOT NULL,
+      achievedValue $intType NOT NULL,
+      startDateTime $intType NOT NULL,
+      endTime $intType,
+      endPeriod $textType,
+      endPeriodValue $intType,
+      reminderHour $intType,
+      reminderMinute $intType,
+      repeatMode $textType NOT NULL,
+      repeatPattern $intType,
+      repeatDays $textType
     )''');
   }
 

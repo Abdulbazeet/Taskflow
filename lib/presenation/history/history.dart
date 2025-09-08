@@ -119,7 +119,8 @@ class _HistoryState extends State<History> {
                     final currentHabits = state.whenData(
                       (allHabits) => allHabits
                           .where(
-                            (habit) => isSameDay(habit.dateTime, _focusedDay),
+                            (habit) =>
+                                isSameDay(habit.startDateTime, _focusedDay),
                           )
                           .toList(),
                     );

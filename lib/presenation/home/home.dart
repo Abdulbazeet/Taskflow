@@ -26,6 +26,7 @@ class _HomeState extends State<Home> {
     'Every certain days',
   ];
   final List<String> _frequency = ['Times per day', 'Hours per day'];
+  String _frequencyString = 'Times per day';
   String _repeat = 'Every day';
   List<String> _days_of_the_week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   final List<String> _endDate = [
@@ -416,37 +417,79 @@ class _HomeState extends State<Home> {
                                     ),
                                   ),
                                   SizedBox(height: 2.sh),
-                                  Text(
-                                    'Frequency',
-                                    style: Theme.of(
-                                      context,
-                                    ).textTheme.bodyMedium,
-                                  ),
-                                  SizedBox(height: 2.sh),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: 3.sw,
-                                          vertical: 2.sh,
-                                        ),
 
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(
-                                            3.sw,
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        'Frequency',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium,
+                                      ),
+                                      Spacer(),
+                                      SizedBox(
+                                        width: 8.sw,
+                                        child: TextField(
+                                          controller: _valueFrequency,
+                                          textAlign: TextAlign.center,
+                                          decoration: InputDecoration(
+                                            hintStyle: Theme.of(context)
+                                                .textTheme
+                                                .bodySmall!
+                                                .copyWith(
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.normal,
+                                                ),
+
+                                            enabledBorder: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                            ),
+                                            border: UnderlineInputBorder(
+                                              borderSide: BorderSide(
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
+                                              ),
+                                            ),
+                                            hintText: '0',
                                           ),
-                                          shape: BoxShape.rectangle,
-                                          color: Theme.of(context)
-                                              .colorScheme
-                                              .primary
-                                              .withValues(alpha: .3),
-                                        ),
-                                        child: Text(
-                                          'Times per day',
                                           style: Theme.of(
                                             context,
-                                          ).textTheme.titleSmall,
+                                          ).textTheme.titleSmall!,
                                         ),
+                                      ),
+                                      SizedBox(width: 3.sw),
+                                      DropdownButton<String>(
+                                        value: _frequencyString,
+                                        alignment:
+                                            AlignmentGeometry.centerRight,
+                                        isExpanded: false,
+                                        isDense: true,
+                                        items: _frequency
+                                            .map(
+                                              (e) => DropdownMenuItem<String>(
+                                                value: e,
+                                                child: Text(
+                                                  e,
+                                                  style: Theme.of(
+                                                    context,
+                                                  ).textTheme.bodySmall,
+                                                ),
+                                              ),
+                                            )
+                                            .toList(),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _frequencyString = value!;
+                                          });
+                                        },
+                                        underline: SizedBox.shrink(),
                                       ),
                                     ],
                                   ),
@@ -663,7 +706,8 @@ class _HomeState extends State<Home> {
                                             return;
                                           } else {
                                             Habits habits = Habits(
-                                              dateTime: DateTime.now(),
+                                              repeatMode: _repeat,
+                                              startDateTime: DateTime.now(),
                                               habitName: _name.text,
                                               frequencyValue: int.parse(
                                                 _value.text,
