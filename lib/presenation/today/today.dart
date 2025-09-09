@@ -166,6 +166,7 @@ class _TodayState extends State<Today> {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       final habits = habit.copyWith(
+                                        repeatDays: habit.repeatDays,
                                         id: habit.id,
                                       );
                                       ref
@@ -244,6 +245,7 @@ class _TodayState extends State<Today> {
                                                   if (currentRun > 0) {
                                                     final updatedHabit = habit
                                                         .copyWith(
+                                                          repeatDays: habit.repeatDays,
                                                           achievedValue:
                                                               habit
                                                                   .achievedValue -
@@ -305,6 +307,7 @@ class _TodayState extends State<Today> {
                                                       currentRun) {
                                                     final updatedHabit = habit
                                                         .copyWith(
+                                                          repeatDays: habit.repeatDays,
                                                           achievedValue:
                                                               habitItems[index]
                                                                   .achievedValue +
@@ -515,6 +518,7 @@ class _TodayState extends State<Today> {
                                                 if (currentRun > 0) {
                                                   final updatedHabit = habit
                                                       .copyWith(
+                                                        repeatDays: habit.repeatDays,
                                                         achievedValue:
                                                             habit
                                                                 .achievedValue -
@@ -573,6 +577,7 @@ class _TodayState extends State<Today> {
                                                     currentRun) {
                                                   final updatedHabit = habit
                                                       .copyWith(
+                                                        repeatDays: habit.repeatDays,
                                                         achievedValue:
                                                             habitItems[index]
                                                                 .achievedValue +

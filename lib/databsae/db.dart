@@ -21,26 +21,28 @@ class DatabaseHelper {
 
   Future _createDB(Database db, int version) async {
     const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
-    const textType = 'TEXT NOT NULL';
-    const intType = 'INTEGER NOT NULL';
+    const textType = 'TEXT';
+    const textTypeNotNull = 'TEXT NOT NULL';
+    const intType = 'INTEGER';
+    const intTypeNotNull = 'INTEGER NOT NULL';
 
     await db.execute('''
-    CREATE TABLE habits (
-      id $idType,
-      habitName $textType NOT NULL,
-      frequencyValue $intType NOT NULL,
-      frequencyUnit $textType NOT NULL,
-      achievedValue $intType NOT NULL,
-      startDateTime $intType NOT NULL,
-      endTime $intType,
-      endPeriod $textType,
-      endPeriodValue $intType,
-      reminderHour $intType,
-      reminderMinute $intType,
-      repeatMode $textType NOT NULL,
-      repeatPattern $intType,
-      repeatDays $textType
-    )''');
+CREATE TABLE habits (
+  id $idType,
+  habitName $textTypeNotNull,
+  frequencyValue $intTypeNotNull,
+  frequencyUnit $textTypeNotNull,
+  achievedValue $intTypeNotNull,
+  startDateTime $intTypeNotNull,
+  endTime $intType,                  
+  endPeriod $textType,               
+  endPeriodValue $intType,           
+  reminderHour $intType,             
+  reminderMinute $intType,            
+  repeatMode $textTypeNotNull,
+  repeatPattern $intType,             
+  repeatDays $textType                
+)''');
   }
 
   Future addHabits(Habits habits) async {

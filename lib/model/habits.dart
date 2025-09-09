@@ -1,3 +1,6 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
 class Habits {
@@ -13,7 +16,7 @@ class Habits {
   final TimeOfDay? reminderTime;
   final String repeatMode; // "Daily", "Certain days", etc.
   final int? repeatPattern; // e.g., every X days/weeks
-  final List<int>? repeatDays; // Days of week [1,2,5]
+  final List<int?> repeatDays; // Days of week [1,2,5]
 
   Habits({
     required this.habitName,
@@ -28,7 +31,7 @@ class Habits {
     this.reminderTime,
     required this.repeatMode,
     this.repeatPattern,
-    this.repeatDays,
+    required this.repeatDays,
   });
 
   /// ✅ copyWith for immutability
@@ -45,9 +48,10 @@ class Habits {
     TimeOfDay? reminderTime,
     String? repeatMode,
     int? repeatPattern,
-    List<int>? repeatDays,
+   required List<int?> repeatDays,
   }) {
     return Habits(
+      repeatDays: repeatDays,
       habitName: habitName ?? this.habitName,
       frequencyValue: frequencyValue ?? this.frequencyValue,
       frequencyUnit: frequencyUnit ?? this.frequencyUnit,
@@ -60,18 +64,17 @@ class Habits {
       reminderTime: reminderTime ?? this.reminderTime,
       repeatMode: repeatMode ?? this.repeatMode,
       repeatPattern: repeatPattern ?? this.repeatPattern,
-      repeatDays: repeatDays ?? this.repeatDays,
     );
   }
 
   /// ✅ Convert Habit → Map (for DB)
   Map<String, dynamic> toMap() {
-    return {
-      'id': id,
+    return <String, dynamic>{
       'habitName': habitName,
       'frequencyValue': frequencyValue,
       'frequencyUnit': frequencyUnit,
       'achievedValue': achievedValue,
+      'id': id,
       'startDateTime': startDateTime.millisecondsSinceEpoch,
       'endTime': endTime?.millisecondsSinceEpoch,
       'endPeriod': endPeriod,
@@ -80,33 +83,42 @@ class Habits {
       'reminderMinute': reminderTime?.minute,
       'repeatMode': repeatMode,
       'repeatPattern': repeatPattern,
-      'repeatDays': repeatDays != null ? repeatDays!.join(',') : null,
+      'repeatDays': repeatDays,
     };
   }
 
   /// ✅ Convert Map → Habit (from DB)
   factory Habits.fromMap(Map<String, dynamic> map) {
     return Habits(
-      id: map['id'],
-      habitName: map['habitName'],
-      frequencyValue: map['frequencyValue'],
-      frequencyUnit: map['frequencyUnit'],
-      achievedValue: map['achievedValue'],
-      startDateTime: DateTime.fromMillisecondsSinceEpoch(map['startDateTime']),
+      habitName: map['habitName'] as String,
+      frequencyValue: map['frequencyValue'] as int,
+      frequencyUnit: map['frequencyUnit'] as String,
+      achievedValue: map['achievedValue'] as int,
+      id: map['id'] != null ? map['id'] as int : null,
+      startDateTime: DateTime.fromMillisecondsSinceEpoch(
+        map['startDateTime'] as int,
+      ),
       endTime: map['endTime'] != null
-          ? DateTime.fromMillisecondsSinceEpoch(map['endTime'])
+          ? DateTime.fromMillisecondsSinceEpoch(map['endTime'] as int)
           : null,
-      endPeriod: map['endPeriod'],
-      endPeriodValue: map['endPeriodValue'],
-      reminderTime:
+      endPeriod: map['endPeriod'] != null ? map['endPeriod'] as String : null,
+      endPeriodValue: map['endPeriodValue'] != null
+          ? map['endPeriodValue'] as int
+          : null,
+       reminderTime:
           (map['reminderHour'] != null && map['reminderMinute'] != null)
           ? TimeOfDay(hour: map['reminderHour'], minute: map['reminderMinute'])
           : null,
-      repeatMode: map['repeatMode'],
-      repeatPattern: map['repeatPattern'],
-      repeatDays: map['repeatDays'] != null && map['repeatDays'].isNotEmpty
-          ? map['repeatDays'].split(',').map<int>((e) => int.parse(e)).toList()
+      repeatMode: map['repeatMode'] as String,
+      repeatPattern: map['repeatPattern'] != null
+          ? map['repeatPattern'] as int
           : null,
+      repeatDays: List<int?>.from((map['repeatDays'] as List<int?>)),
     );
   }
+
+  String toJson() => json.encode(toMap());
+
+  factory Habits.fromJson(String source) =>
+      Habits.fromMap(json.decode(source) as Map<String, dynamic>);
 }

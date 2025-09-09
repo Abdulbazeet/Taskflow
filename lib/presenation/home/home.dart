@@ -37,13 +37,13 @@ class _HomeState extends State<Home> {
   ];
 
   String _selectedEndDate = 'Never';
-  List<int> _daysIndex = [];
+  List<int?> _daysIndex = [];
   TimeOfDay? _chosenTIme;
 
   int _index = 0;
-  String _selectedFrequency = 'times per day';
+  String _selectedFrequency = 'Times per day';
   final TextEditingController _name = TextEditingController();
-  final TextEditingController _repeatText = TextEditingController();
+  final TextEditingController _repeatText = TextEditingController(text: '2');
   final TextEditingController _value = TextEditingController(text: '1');
   final TextEditingController _valueFrequency = TextEditingController(
     text: '1',
@@ -200,6 +200,8 @@ class _HomeState extends State<Home> {
                                           ? SizedBox(
                                               width: 8.sw,
                                               child: TextField(
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 controller: _value,
                                                 textAlign: TextAlign.center,
                                                 decoration: InputDecoration(
@@ -416,7 +418,7 @@ class _HomeState extends State<Home> {
                                           ),
                                     ),
                                   ),
-                                  SizedBox(height: 2.sh),
+                                  SizedBox(height: 1.sh),
 
                                   Row(
                                     mainAxisAlignment:
@@ -433,6 +435,7 @@ class _HomeState extends State<Home> {
                                         width: 8.sw,
                                         child: TextField(
                                           controller: _valueFrequency,
+                                          keyboardType: TextInputType.number,
                                           textAlign: TextAlign.center,
                                           decoration: InputDecoration(
                                             hintStyle: Theme.of(context)
@@ -588,6 +591,8 @@ class _HomeState extends State<Home> {
                                               child: TextField(
                                                 controller: _repeatText,
                                                 textAlign: TextAlign.center,
+                                                keyboardType:
+                                                    TextInputType.number,
                                                 decoration: InputDecoration(
                                                   hintStyle: Theme.of(context)
                                                       .textTheme
@@ -671,9 +676,14 @@ class _HomeState extends State<Home> {
                                               ),
                                             );
                                             _name.clear();
+                                            _endPickedDate = null;
+                                            _chosenTIme = null;
                                             _value.text = '1';
+                                            _repeat = 'Every day';
+                                            _repeatText.text = '2';
+                                            _selectedEndDate = 'Never';
                                             _selectedFrequency =
-                                                'times per day';
+                                                'Times per day';
                                           },
                                           error: (error, stackTrace) {
                                             Navigator.pop(context);
@@ -706,11 +716,22 @@ class _HomeState extends State<Home> {
                                             return;
                                           } else {
                                             Habits habits = Habits(
+                                              endPeriod: _selectedEndDate,
+                                              endPeriodValue: int.parse(
+                                                _value.text,
+                                              ),
+                                              endTime: _endPickedDate,
+                                              reminderTime: _chosenTIme,
+                                              repeatDays: _daysIndex,
+                                              repeatPattern: int.parse(
+                                                _repeatText.text,
+                                              ),
+
                                               repeatMode: _repeat,
                                               startDateTime: DateTime.now(),
                                               habitName: _name.text,
                                               frequencyValue: int.parse(
-                                                _value.text,
+                                                _valueFrequency.text,
                                               ),
                                               frequencyUnit: _selectedFrequency,
                                               achievedValue: 0,

@@ -24,7 +24,7 @@ class HomeRepository {
     required TimeOfDay? reminderTime,
     required String repeatMode,
     required int? repeatPattern,
-    required List<int>? repeatDays,
+    required List<int?> repeatDays,
   }) async {
     Habits newHabits = Habits(
       repeatMode: repeatMode,
