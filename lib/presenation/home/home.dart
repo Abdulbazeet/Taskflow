@@ -26,7 +26,6 @@ class _HomeState extends State<Home> {
     'Every certain days',
   ];
   final List<String> _frequency = ['Times per day', 'Hours per day'];
-  String _frequencyString = 'Times per day';
   String _repeat = 'Every day';
   List<String> _days_of_the_week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
   final List<String> _endDate = [
@@ -469,7 +468,7 @@ class _HomeState extends State<Home> {
                                       ),
                                       SizedBox(width: 3.sw),
                                       DropdownButton<String>(
-                                        value: _frequencyString,
+                                        value: _selectedFrequency,
                                         alignment:
                                             AlignmentGeometry.centerRight,
                                         isExpanded: false,
@@ -489,7 +488,7 @@ class _HomeState extends State<Home> {
                                             .toList(),
                                         onChanged: (value) {
                                           setState(() {
-                                            _frequencyString = value!;
+                                            _selectedFrequency = value!;
                                           });
                                         },
                                         underline: SizedBox.shrink(),

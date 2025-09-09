@@ -120,7 +120,7 @@ class _HistoryState extends State<History> {
                       (allHabits) => allHabits
                           .where(
                             (habit) =>
-                                isSameDay(habit.startDateTime, _focusedDay),
+                                !(habit.startDateTime.isAfter(_focusedDay!)),
                           )
                           .toList(),
                     );

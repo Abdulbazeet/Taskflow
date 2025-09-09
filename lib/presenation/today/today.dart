@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 import 'package:sizer/sizer.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'package:task_flow/model/habits.dart';
 import 'package:task_flow/presenation/today/today_notifier/today_notifier.dart';
 import 'package:task_flow/utils/utils.dart';
 
@@ -120,14 +118,20 @@ class _TodayState extends State<Today> {
             Consumer(
               builder: (context, ref, child) {
                 final state = ref.watch(todayProvider);
-                final uncompletedHabits = state.whenData(
-                  (allHabits) => allHabits
-                      .where(
-                        (habit) => habit.achievedValue < habit.frequencyValue ,
-                      )
-                      .toList(),
+                DateTime today = DateTime.now();
+                final todayHabits = state.whenData(
+                  (allHabits) => allHabits.where((habit) {
+                    // final started = !habit.startDateTime.isAfter(today);
+                    // final notExpired =
+                    //     habit.endTime == null || habit.endTime!.isAfter(today);
+                    // final notCompleted =
+                    //     habit.achievedValue < habit.frequencyValue;
+                    // return started && notExpired && notCompleted;
+
+                    return AppUtils.isDueToday(habit, today);
+                  }).toList(),
                 );
-                return uncompletedHabits.when(
+                return todayHabits.when(
                   data: (data) {
                     if (data.isEmpty) {
                       return Column(
@@ -245,7 +249,8 @@ class _TodayState extends State<Today> {
                                                   if (currentRun > 0) {
                                                     final updatedHabit = habit
                                                         .copyWith(
-                                                          repeatDays: habit.repeatDays,
+                                                          repeatDays:
+                                                              habit.repeatDays,
                                                           achievedValue:
                                                               habit
                                                                   .achievedValue -
@@ -307,7 +312,8 @@ class _TodayState extends State<Today> {
                                                       currentRun) {
                                                     final updatedHabit = habit
                                                         .copyWith(
-                                                          repeatDays: habit.repeatDays,
+                                                          repeatDays:
+                                                              habit.repeatDays,
                                                           achievedValue:
                                                               habitItems[index]
                                                                   .achievedValue +
@@ -518,7 +524,8 @@ class _TodayState extends State<Today> {
                                                 if (currentRun > 0) {
                                                   final updatedHabit = habit
                                                       .copyWith(
-                                                        repeatDays: habit.repeatDays,
+                                                        repeatDays:
+                                                            habit.repeatDays,
                                                         achievedValue:
                                                             habit
                                                                 .achievedValue -
@@ -577,7 +584,8 @@ class _TodayState extends State<Today> {
                                                     currentRun) {
                                                   final updatedHabit = habit
                                                       .copyWith(
-                                                        repeatDays: habit.repeatDays,
+                                                        repeatDays:
+                                                            habit.repeatDays,
                                                         achievedValue:
                                                             habitItems[index]
                                                                 .achievedValue +
