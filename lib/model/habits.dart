@@ -15,7 +15,7 @@ class Habits {
   final int? endPeriodValue; // e.g., 7 days, 3 weeks
   final TimeOfDay? reminderTime;
   final String repeatMode; // "Daily", "Certain days", etc.
-  final int? repeatPattern; // e.g., every X days/weeks
+  final int? repeatPattern; // e.g., every X days
   final List<int?> repeatDays; // Days of week [1,2,5]
 
   Habits({
@@ -34,7 +34,6 @@ class Habits {
     required this.repeatDays,
   });
 
-  /// ✅ copyWith for immutability
   Habits copyWith({
     String? habitName,
     int? frequencyValue,
@@ -48,7 +47,7 @@ class Habits {
     TimeOfDay? reminderTime,
     String? repeatMode,
     int? repeatPattern,
-   required List<int?> repeatDays,
+    required List<int?> repeatDays,
   }) {
     return Habits(
       repeatDays: repeatDays,
@@ -67,7 +66,6 @@ class Habits {
     );
   }
 
-  /// ✅ Convert Habit → Map (for DB)
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'habitName': habitName,
@@ -105,7 +103,7 @@ class Habits {
       endPeriodValue: map['endPeriodValue'] != null
           ? map['endPeriodValue'] as int
           : null,
-       reminderTime:
+      reminderTime:
           (map['reminderHour'] != null && map['reminderMinute'] != null)
           ? TimeOfDay(hour: map['reminderHour'], minute: map['reminderMinute'])
           : null,

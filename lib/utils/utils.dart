@@ -1,63 +1,74 @@
 import 'package:task_flow/model/habits.dart';
 
 class AppUtils {
-  static List<Map<String, dynamic>> habits = [
-    {
-      "habitName": "Drink Water",
-      "frequencyValue": 8,
-      "frequencyUnit": "times per day",
-      "achievedValue": 5,
-      "status": "incomplete", // 5 < 8
-    },
-    {
-      "habitName": "Morning Run",
-      "frequencyValue": 3,
-      "frequencyUnit": "days per week",
-      "achievedValue": 3,
-      "status": "completed", // 3 == 3
-    },
-    {
-      "habitName": "Read Book",
-      "frequencyValue": 2,
-      "frequencyUnit": "hours per day",
-      "achievedValue": 1,
-      "status": "incomplete", // 1 < 2
-    },
-    {
-      "habitName": "Meditation",
-      "frequencyValue": 7,
-      "frequencyUnit": "days per week",
-      "achievedValue": 7,
-      "status": "completed", // 7 == 7
-    },
-    {
-      "habitName": "Coding Practice",
-      "frequencyValue": 10,
-      "frequencyUnit": "hours per week",
-      "achievedValue": 6,
-      "status": "incomplete", // 6 < 10
-    },
-  ];
-  // static bool isDueToday(DateTime start, int repeatEvery, DateTime today) {
-  //   final currentDate = DateTime(today.year, today.month, today.day);
-  //   final startDate = DateTime(start.year, start.month, start.day);
-  //   if (currentDate.isBefore(startDate)) return false;
-  //   final diffference = currentDate.difference(startDate).inDays;
-  //   return diffference % repeatEvery == 0;
-  // }
-  //   static bool isDueWeek(DateTime start, int repeatEvery, DateTime today) {
-  //   final currentDate = DateTime(today.year, today.month, today.day);
-  //   final startDate = DateTime(start.year, start.month, start.day);
-  //   if (currentDate.isBefore(startDate)) return false;
-  //   final diffference = currentDate.difference(startDate);
-  //   return diffference % repeatEvery == 0;
   // }
   static bool isDueToday(Habits habits, DateTime currentDate) {
     if (habits.achievedValue >= habits.frequencyValue) return false;
     if (habits.endTime != null) {
-      return habits.endTime!.isAfter(currentDate);
+      switch (habits.repeatMode) {
+        case 'Every day':
+          return habits.endTime!.isAfter(currentDate);
+
+        case 'Certain days':
+          if (habits.endTime!.isBefore(currentDate)) return false;
+          return habits.repeatDays.contains((currentDate.weekday + 1));
+        case "Every certain days":
+          if (habits.endTime!.isBefore(currentDate)) return false;
+          final difference = currentDate
+              .difference(habits.startDateTime)
+              .inDays;
+          return difference % habits.repeatPattern! == 0;
+      }
     } else {
-      return true;
+      switch (habits.endPeriod) {
+        case "Never":
+          switch (habits.repeatMode) {
+            case 'Every day':
+              return true;
+            case 'Certain days':
+              return habits.repeatDays.contains((currentDate.weekday + 1));
+            case "Every certain days":
+              final difference = currentDate
+                  .difference(habits.startDateTime)
+                  .inDays;
+              return difference % habits.repeatPattern! == 0;
+          }
+
+        case 'After days':
+          final end = habits.startDateTime.add(
+            Duration(days: habits.endPeriodValue!),
+          );
+          final difference = currentDate.difference(end).inDays;
+          return difference % habits.endPeriodValue! == 0;
+        case 'After weeks':
+          switch (habits.repeatMode) {
+            case 'Every day':
+              final pastWeeks =
+                  currentDate.difference(habits.startDateTime).inDays / 7;
+              if (pastWeeks > habits.endPeriodValue!) return false;
+              return true;
+            case 'Certain days':
+              final pastWeeks =
+                  currentDate.difference(habits.startDateTime).inDays / 7;
+              if (pastWeeks > habits.endPeriodValue!) return false;
+              return habits.repeatDays.contains((currentDate.weekday + 1));
+            case "Every certain days":
+              final pastWeeks =
+                  currentDate.difference(habits.startDateTime).inDays / 7;
+              final pastDays = currentDate
+                  .difference(habits.startDateTime)
+                  .inDays;
+              if (pastWeeks > habits.endPeriodValue!) return false;
+              return pastDays % habits.repeatPattern! == 0;
+          }
+
+        default:
+          return false;
+      }
+      // if (habits.endPeriod == 'Never') return true;
+
+      // return true;
     }
+    return true;
   }
 }
