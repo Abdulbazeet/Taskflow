@@ -31,7 +31,7 @@ class _HomeState extends State<Home> {
   final List<String> _endDate = ['Never', 'After days', 'Specific date'];
 
   String _selectedEndDate = 'Never';
-  final List<int?> _daysIndex = [];
+   List<int?> _daysIndex = [];
   TimeOfDay? _chosenTIme;
 
   int _index = 0;
@@ -690,6 +690,7 @@ class _HomeState extends State<Home> {
                                             _repeat = 'Every day';
                                             _repeatText.text = '2';
                                             _selectedEndDate = 'Never';
+                                            _daysIndex = [];
                                             _selectedFrequency =
                                                 'Times per day';
                                           },

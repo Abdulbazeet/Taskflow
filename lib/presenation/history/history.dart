@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:sizer/sizer.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:task_flow/presenation/today/today_notifier/today_notifier.dart';
+import 'package:task_flow/utils/utils.dart';
 
 class History extends StatefulWidget {
   const History({super.key});
@@ -120,8 +121,8 @@ class _HistoryState extends State<History> {
                       (allHabits) => allHabits
                           .where(
                             (habit) =>
-                                !(habit.startDateTime.isAfter(_focusedDay!)),
-                            // AppUtils.historyIsDueToday(habit, _focusedDay!),
+                                // !(habit.startDateTime.isAfter(_focusedDay!)),
+                            AppUtils.historyIsDueToday(habit, _focusedDay!),
                           )
                           .toList(),
                     );
