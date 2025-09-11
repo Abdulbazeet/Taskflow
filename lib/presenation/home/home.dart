@@ -27,16 +27,11 @@ class _HomeState extends State<Home> {
   ];
   final List<String> _frequency = ['Times per day', 'Hours per day'];
   String _repeat = 'Every day';
-  List<String> _days_of_the_week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-  final List<String> _endDate = [
-    'Never',
-    'After days',
-    'After weeks',
-    'Specific date',
-  ];
+  final List<String> _days_of_the_week = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+  final List<String> _endDate = ['Never', 'After days', 'Specific date'];
 
   String _selectedEndDate = 'Never';
-  List<int?> _daysIndex = [];
+  final List<int?> _daysIndex = [];
   TimeOfDay? _chosenTIme;
 
   int _index = 0;
@@ -194,8 +189,7 @@ class _HomeState extends State<Home> {
                                         ).textTheme.bodyMedium,
                                       ),
                                       Spacer(),
-                                      _selectedEndDate == 'After days' ||
-                                              _selectedEndDate == 'After weeks'
+                                      _selectedEndDate == 'After days'
                                           ? SizedBox(
                                               width: 8.sw,
                                               child: TextField(
@@ -317,6 +311,9 @@ class _HomeState extends State<Home> {
                                             .toList(),
                                         onChanged: (value) {
                                           setState(() {
+                                            if (value == 'After days') {
+                                              _selectedEndDate = 'Every day';
+                                            }
                                             _selectedEndDate = value!;
                                           });
                                         },
@@ -625,34 +622,46 @@ class _HomeState extends State<Home> {
                                               ),
                                             )
                                           : SizedBox.shrink(),
-
-                                      DropdownButton<String>(
-                                        isExpanded: false,
-                                        isDense: true,
-                                        padding: EdgeInsets.all(0),
-                                        value: _repeat,
-                                        alignment:
-                                            AlignmentGeometry.centerRight,
-                                        items: _repeatMode
-                                            .map(
-                                              (e) => DropdownMenuItem<String>(
-                                                value: e,
-                                                child: Text(
-                                                  e,
-                                                  style: Theme.of(
-                                                    context,
-                                                  ).textTheme.bodySmall,
-                                                ),
-                                              ),
+                                      _selectedEndDate == 'After days'
+                                          ? Text(
+                                              _repeat,
+                                              style: Theme.of(
+                                                context,
+                                              ).textTheme.bodySmall,
                                             )
-                                            .toList(),
-                                        onChanged: (value) {
-                                          setState(() {
-                                            _repeat = value!;
-                                          });
-                                        },
-                                        underline: SizedBox.shrink(),
-                                      ),
+                                          : DropdownButton<String>(
+                                              isExpanded: false,
+                                              isDense: true,
+                                              padding: EdgeInsets.all(0),
+                                              value: _repeat,
+                                              alignment:
+                                                  AlignmentGeometry.centerRight,
+                                              items: _repeatMode
+                                                  .map(
+                                                    (e) =>
+                                                        DropdownMenuItem<
+                                                          String
+                                                        >(
+                                                          value: e,
+                                                          child: Text(
+                                                            e,
+                                                            style:
+                                                                Theme.of(
+                                                                      context,
+                                                                    )
+                                                                    .textTheme
+                                                                    .bodySmall,
+                                                          ),
+                                                        ),
+                                                  )
+                                                  .toList(),
+                                              onChanged: (value) {
+                                                setState(() {
+                                                  _repeat = value!;
+                                                });
+                                              },
+                                              underline: SizedBox.shrink(),
+                                            ),
                                     ],
                                   ),
 
@@ -725,7 +734,6 @@ class _HomeState extends State<Home> {
                                               repeatPattern: int.parse(
                                                 _repeatText.text,
                                               ),
-                                              
 
                                               repeatMode: _repeat,
                                               startDateTime: DateTime.now(),
