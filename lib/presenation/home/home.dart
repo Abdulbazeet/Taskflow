@@ -725,6 +725,7 @@ class _HomeState extends State<Home> {
                                               repeatPattern: int.parse(
                                                 _repeatText.text,
                                               ),
+                                              
 
                                               repeatMode: _repeat,
                                               startDateTime: DateTime.now(),

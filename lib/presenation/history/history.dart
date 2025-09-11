@@ -121,6 +121,7 @@ class _HistoryState extends State<History> {
                           .where(
                             (habit) =>
                                 !(habit.startDateTime.isAfter(_focusedDay!)),
+                            // AppUtils.historyIsDueToday(habit, _focusedDay!),
                           )
                           .toList(),
                     );
@@ -152,92 +153,109 @@ class _HistoryState extends State<History> {
 
                               return StatefulBuilder(
                                 builder: (context, setState) {
-                                  return Container(
-                                    height: 13.5.sh,
-                                    decoration: BoxDecoration(
-                                      color: Theme.of(
-                                        context,
-                                      ).colorScheme.surface,
-
-                                      borderRadius: BorderRadius.circular(3.h),
-                                    ),
-                                    margin: EdgeInsets.symmetric(
-                                      vertical: 1.sh,
-                                    ),
-
-                                    width: 100.w,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 3.sw,
-                                      vertical: 2.sh,
-                                    ),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-
-                                      children: [
-                                        Text(
-                                          habitItems[index].habitName,
-                                          style: Theme.of(
-                                            context,
-                                          ).textTheme.bodyMedium,
-                                        ),
-                                        SizedBox(height: 1.sh),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Completed: $currentRun / ${habitItems[index].frequencyValue} ${habitItems[index].frequencyUnit}',
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodySmall,
+                                  return InkWell(
+                                    onLongPress: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return Dialog(
+                                            child: Center(
+                                              child: Text(
+                                                habitItems[index].toJson(),
+                                              ),
                                             ),
-                                            Spacer(),
-                                          ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Container(
+                                      height: 13.5.sh,
+                                      decoration: BoxDecoration(
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.surface,
+
+                                        borderRadius: BorderRadius.circular(
+                                          3.h,
                                         ),
-                                        SizedBox(height: 1.sh),
+                                      ),
+                                      margin: EdgeInsets.symmetric(
+                                        vertical: 1.sh,
+                                      ),
 
-                                        Expanded(
-                                          child: LinearProgressIndicator(
-                                            borderRadius: BorderRadius.circular(
-                                              2.sh,
-                                            ),
+                                      width: 100.w,
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 3.sw,
+                                        vertical: 2.sh,
+                                      ),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
 
-                                            value:
-                                                currentRun /
-                                                habitItems[index]
-                                                    .frequencyValue,
-                                            backgroundColor:
-                                                Colors.grey.shade300,
-                                            color:
-                                                currentRun ==
-                                                    habitItems[index]
-                                                        .frequencyValue
-                                                ? Theme.of(
-                                                    context,
-                                                  ).colorScheme.primary
-                                                : Colors.blue,
+                                        children: [
+                                          Text(
+                                            habitItems[index].habitName,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
                                           ),
-                                        ),
-                                        SizedBox(height: 1.sh),
+                                          SizedBox(height: 1.sh),
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Completed: $currentRun / ${habitItems[index].frequencyValue} ${habitItems[index].frequencyUnit}',
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodySmall,
+                                              ),
+                                              Spacer(),
+                                            ],
+                                          ),
+                                          SizedBox(height: 1.sh),
 
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Progress',
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodySmall,
+                                          Expanded(
+                                            child: LinearProgressIndicator(
+                                              borderRadius:
+                                                  BorderRadius.circular(2.sh),
+
+                                              value:
+                                                  currentRun /
+                                                  habitItems[index]
+                                                      .frequencyValue,
+                                              backgroundColor:
+                                                  Colors.grey.shade300,
+                                              color:
+                                                  currentRun ==
+                                                      habitItems[index]
+                                                          .frequencyValue
+                                                  ? Theme.of(
+                                                      context,
+                                                    ).colorScheme.primary
+                                                  : Colors.blue,
                                             ),
-                                            Spacer(),
-                                            Text(
-                                              '${((currentRun / habitItems[index].frequencyValue) * 100).floor()} %',
-                                              style: Theme.of(
-                                                context,
-                                              ).textTheme.bodySmall,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                          ),
+                                          SizedBox(height: 1.sh),
+
+                                          Row(
+                                            children: [
+                                              Text(
+                                                'Progress',
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodySmall,
+                                              ),
+                                              Spacer(),
+                                              Text(
+                                                '${((currentRun / habitItems[index].frequencyValue) * 100).floor()} %',
+                                                style: Theme.of(
+                                                  context,
+                                                ).textTheme.bodySmall,
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   );
                                 },
