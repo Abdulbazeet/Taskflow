@@ -51,8 +51,8 @@ class AppUtils {
             case 'Every day':
               final pastWeeks =
                   currentDate.difference(habits.startDateTime).inDays / 7;
-              if (pastWeeks > habits.endPeriodValue!) return false;
-              return true;
+              return (pastWeeks > habits.endPeriodValue!);
+
             case 'Certain days':
               final pastWeeks =
                   currentDate.difference(habits.startDateTime).inDays / 7;
