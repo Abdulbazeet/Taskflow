@@ -74,9 +74,7 @@ class AppUtils {
         default:
           return false;
       }
-      // if (habits.endPeriod == 'Never') return true;
-
-      // return true;
+     
     }
     throw Exception("Unhandled habit repeatMode/endPeriod case");
   }

@@ -121,12 +121,7 @@ class _TodayState extends State<Today> {
                 DateTime today = DateTime.now();
                 final todayHabits = state.whenData(
                   (allHabits) => allHabits.where((habit) {
-                    // final started = !habit.startDateTime.isAfter(today);
-                    // final notExpired =
-                    //     habit.endTime == null || habit.endTime!.isAfter(today);
-                    // final notCompleted =
-                    //     habit.achievedValue < habit.frequencyValue;
-                    // return started && notExpired && notCompleted;
+              
 
                     return AppUtils.isDueToday(habit, today);
                   }).toList(),
