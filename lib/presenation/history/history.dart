@@ -170,7 +170,7 @@ class _HistoryState extends State<History> {
                                       );
                                     },
                                     child: Container(
-                                      height: 13.5.sh,
+                                     // height: 13.5.sh,
                                       decoration: BoxDecoration(
                                         color: Theme.of(
                                           context,
@@ -215,26 +215,24 @@ class _HistoryState extends State<History> {
                                           ),
                                           SizedBox(height: 1.sh),
 
-                                          Expanded(
-                                            child: LinearProgressIndicator(
-                                              borderRadius:
-                                                  BorderRadius.circular(2.sh),
-
-                                              value:
-                                                  currentRun /
-                                                  habitItems[index]
-                                                      .frequencyValue,
-                                              backgroundColor:
-                                                  Colors.grey.shade300,
-                                              color:
-                                                  currentRun ==
-                                                      habitItems[index]
-                                                          .frequencyValue
-                                                  ? Theme.of(
-                                                      context,
-                                                    ).colorScheme.primary
-                                                  : Colors.blue,
-                                            ),
+                                          LinearProgressIndicator(
+                                            borderRadius:
+                                                BorderRadius.circular(2.sh),
+                                                                                    
+                                            value:
+                                                currentRun /
+                                                habitItems[index]
+                                                    .frequencyValue,
+                                            backgroundColor:
+                                                Colors.grey.shade300,
+                                            color:
+                                                currentRun ==
+                                                    habitItems[index]
+                                                        .frequencyValue
+                                                ? Theme.of(
+                                                    context,
+                                                  ).colorScheme.primary
+                                                : Colors.blue,
                                           ),
                                           SizedBox(height: 1.sh),
 

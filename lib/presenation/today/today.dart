@@ -46,6 +46,7 @@ class _TodayState extends State<Today> {
               padding: EdgeInsets.symmetric(horizontal: 2.w, vertical: 1.h),
 
               child: TableCalendar(
+                rowHeight: 13.sh,
                 availableGestures: AvailableGestures.none,
                 focusedDay: DateTime.now(),
                 firstDay: DateTime(1999),
@@ -63,48 +64,119 @@ class _TodayState extends State<Today> {
 
                 calendarBuilders: CalendarBuilders(
                   todayBuilder: (context, date, events) {
-                    return Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                      child: Center(
-                        child: Text(
-                          date.day.toString(),
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium!.copyWith(color: Colors.white),
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 1.sw),
+                          decoration: BoxDecoration(
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6.sh),
+                            ),
+                          ),
                         ),
-                      ),
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          left: 0,
+                          child: Container(
+                            margin: EdgeInsets.all(4.sw).copyWith(top: 3.sw),
+                            height: 1.sh,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.shade300,
+                              // borderRadius: BorderRadius.all(
+                              //   Radius.circular(6.sh),
+                              // ),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          left: 0,
+                          child: Container(
+                            margin: EdgeInsets.all(2.sw).copyWith(bottom: 1.sw),
+                            height: 4.5.sh,
+                            decoration: BoxDecoration(
+                              // shape: BoxShape.circle,
+                              color: Colors.grey.shade300,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(6.sh),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                date.day.toString(),
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
                   defaultBuilder: (context, day, focusedDay) {
-                    if (day.isBefore(focusedDay)) {
-                      return Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.white,
-                        ),
-                        child: Center(
-                          child: Icon(
-                            Icons.remove,
-                            color: Colors.grey,
-                            size: 20.sp,
+                    return Stack(
+                      children: [
+                        Container(
+                          margin: EdgeInsets.symmetric(horizontal: 1.sw),
+                          decoration: BoxDecoration(
+                            border: Border.all(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: .1.sw,
+                            ),
+                            color: Colors.transparent,
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(6.sh),
+                            ),
                           ),
                         ),
-                      );
-                    }
-                    return Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.grey.shade300,
-                      ),
-                      child: Center(
-                        child: Text(
-                          day.day.toString(),
-                          style: Theme.of(context).textTheme.bodyMedium,
+                        Positioned(
+                          top: 0,
+                          right: 0,
+                          left: 0,
+                          child: Container(
+                            margin: EdgeInsets.all(4.sw).copyWith(top: 3.sw),
+                            height: 1.sh,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Theme.of(context).colorScheme.primary,
+                              // borderRadius: BorderRadius.all(
+                              //   Radius.circular(6.sh),
+                              // ),
+                            ),
+                          ),
                         ),
-                      ),
+
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          left: 0,
+                          child: Container(
+                            margin: EdgeInsets.all(2.sw).copyWith(bottom: 1.sw),
+                            height: 4.5.sh,
+                            decoration: BoxDecoration(
+                              // shape: BoxShape.circle,
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(6.sh),
+                              ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                day.day.toString(),
+                                style: Theme.of(context).textTheme.bodyMedium!,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     );
                   },
                 ),
@@ -121,8 +193,6 @@ class _TodayState extends State<Today> {
                 DateTime today = DateTime.now();
                 final todayHabits = state.whenData(
                   (allHabits) => allHabits.where((habit) {
-              
-
                     return AppUtils.isDueToday(habit, today);
                   }).toList(),
                 );
@@ -192,7 +262,7 @@ class _TodayState extends State<Today> {
                             child: StatefulBuilder(
                               builder: (context, setState) {
                                 return Container(
-                                  height: 15.sh,
+                                  // height: 15.sh,
                                   decoration: BoxDecoration(
                                     color: Theme.of(
                                       context,
@@ -361,25 +431,25 @@ class _TodayState extends State<Today> {
                                       ),
                                       SizedBox(height: 1.sh),
 
-                                      Expanded(
-                                        child: LinearProgressIndicator(
-                                          borderRadius: BorderRadius.circular(
-                                            2.sh,
-                                          ),
-
-                                          value:
-                                              currentRun /
-                                              habitItems[index].frequencyValue,
-                                          backgroundColor: Colors.grey.shade300,
-                                          color:
-                                              currentRun ==
-                                                  habitItems[index]
-                                                      .frequencyValue
-                                              ? Theme.of(
-                                                  context,
-                                                ).colorScheme.primary
-                                              : Colors.blue,
+                                      LinearProgressIndicator(
+                                        borderRadius: BorderRadius.circular(
+                                          2.sh,
                                         ),
+                                                                            
+                                        value:
+                                            currentRun /
+                                            habitItems[index]
+                                                .frequencyValue,
+                                        backgroundColor:
+                                            Colors.grey.shade300,
+                                        color:
+                                            currentRun ==
+                                                habitItems[index]
+                                                    .frequencyValue
+                                            ? Theme.of(
+                                                context,
+                                              ).colorScheme.primary
+                                            : Colors.blue,
                                       ),
                                       SizedBox(height: 1.sh),
 
@@ -470,7 +540,7 @@ class _TodayState extends State<Today> {
                           return StatefulBuilder(
                             builder: (context, setState) {
                               return Container(
-                                height: 15.sh,
+                                // height: 15.sh,
                                 decoration: BoxDecoration(
                                   color: Theme.of(context).colorScheme.surface,
 
@@ -630,24 +700,20 @@ class _TodayState extends State<Today> {
                                     ),
                                     SizedBox(height: 1.sh),
 
-                                    Expanded(
-                                      child: LinearProgressIndicator(
-                                        borderRadius: BorderRadius.circular(
-                                          2.sh,
-                                        ),
+                                    LinearProgressIndicator(
+                                      borderRadius: BorderRadius.circular(2.sh),
 
-                                        value:
-                                            currentRun /
-                                            habitItems[index].frequencyValue,
-                                        backgroundColor: Colors.grey.shade300,
-                                        color:
-                                            currentRun ==
-                                                habitItems[index].frequencyValue
-                                            ? Theme.of(
-                                                context,
-                                              ).colorScheme.primary
-                                            : Colors.blue,
-                                      ),
+                                      value:
+                                          currentRun /
+                                          habitItems[index].frequencyValue,
+                                      backgroundColor: Colors.grey.shade300,
+                                      color:
+                                          currentRun ==
+                                              habitItems[index].frequencyValue
+                                          ? Theme.of(
+                                              context,
+                                            ).colorScheme.primary
+                                          : Colors.blue,
                                     ),
                                     SizedBox(height: 1.sh),
 
