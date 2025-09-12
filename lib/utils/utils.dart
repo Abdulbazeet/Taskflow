@@ -1,3 +1,4 @@
+import 'package:table_calendar/table_calendar.dart';
 import 'package:task_flow/model/habits.dart';
 
 class AppUtils {
@@ -7,7 +8,9 @@ class AppUtils {
     if (habits.endTime != null) {
       switch (habits.repeatMode) {
         case 'Every day':
-          return habits.endTime!.isAfter(currentDate);
+          if (currentDate.isAfter(habits.endTime!)) return false;
+
+          return true;
 
         case 'Certain days':
           if (habits.endTime!.isBefore(currentDate)) return false;
@@ -26,26 +29,26 @@ class AppUtils {
             case 'Every day':
               return true;
             case 'Certain days':
-              return habits.repeatDays.contains((currentDate.weekday ));
+              return habits.repeatDays.contains((currentDate.weekday));
             case "Every certain days":
-              if (habits.repeatMode == 'Every day') {
-                final difference = currentDate
-                    .difference(habits.startDateTime)
-                    .inDays;
-                return difference % habits.repeatPattern! == 0;
-              }
+              final difference = currentDate
+                  .difference(habits.startDateTime)
+                  .inDays;
+              return difference % habits.repeatPattern! == 0;
           }
 
         case 'After days':
           final end = habits.startDateTime.add(
             Duration(days: habits.endPeriodValue!),
           );
-          // if (end.isBefore(currentDate)) return false;
-          // final difference = currentDate
-          //     .difference(habits.startDateTime)
-          //     .inDays;
-          // return difference % habits.endPeriodValue! == 0;
-          return end.isBefore(currentDate);
+          if (currentDate.isAfter(end.add(Duration(days: 1)))) return false;
+          return true;
+        // if (end.isBefore(currentDate)) return false;
+        // final difference = currentDate
+        //     .difference(habits.startDateTime)
+        //     .inDays;
+        // return difference % habits.endPeriodValue! == 0;
+
         // case 'After weeks':
         //   switch (habits.repeatMode) {
         //     case 'Every day':
@@ -83,16 +86,16 @@ class AppUtils {
     if (habits.endTime != null) {
       switch (habits.repeatMode) {
         case 'Every day':
-          return habits.endTime!.isAfter(focusedDay);
+          if (focusedDay.isAfter(habits.endTime!.add(Duration(days: 1)))) return false;
+
+          return true;
 
         case 'Certain days':
           if (habits.endTime!.isBefore(focusedDay)) return false;
           return habits.repeatDays.contains((focusedDay.weekday));
         case "Every certain days":
           if (habits.endTime!.isBefore(focusedDay)) return false;
-          final difference = focusedDay
-              .difference(habits.startDateTime)
-              .inDays;
+          final difference = focusedDay.difference(habits.startDateTime).inDays;
           return difference % habits.repeatPattern! == 0;
       }
     } else {
@@ -102,26 +105,20 @@ class AppUtils {
             case 'Every day':
               return true;
             case 'Certain days':
-              return habits.repeatDays.contains((focusedDay.weekday ));
+              return habits.repeatDays.contains((focusedDay.weekday));
             case "Every certain days":
-              if (habits.repeatMode == 'Every day') {
-                final difference = focusedDay
-                    .difference(habits.startDateTime)
-                    .inDays;
-                return difference % habits.repeatPattern! == 0;
-              }
+              final difference = focusedDay
+                  .difference(habits.startDateTime)
+                  .inDays;
+              return difference % habits.repeatPattern! == 0;
           }
 
         case 'After days':
           final end = habits.startDateTime.add(
             Duration(days: habits.endPeriodValue!),
           );
-          // if (end.isBefore(currentDate)) return false;
-          // final difference = currentDate
-          //     .difference(habits.startDateTime)
-          //     .inDays;
-          // return difference % habits.endPeriodValue! == 0;
-          return end.isBefore(focusedDay);
+          if (end.isBefore(focusedDay)) return false;
+          return true;
         // case 'After weeks':
         //   switch (habits.repeatMode) {
         //     case 'Every day':
@@ -147,9 +144,8 @@ class AppUtils {
         default:
           return false;
       }
-    
     }
-  
+
     throw Exception("Unhandled habit repeatMode/endPeriod case");
   }
 }

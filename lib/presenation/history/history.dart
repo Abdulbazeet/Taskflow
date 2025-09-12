@@ -58,7 +58,7 @@ class _HistoryState extends State<History> {
                   onDaySelected: (selectedDay, focusedDay) {
                     setState(() {
                       _selectedDay = selectedDay;
-                      _focusedDay = focusedDay;
+                      _focusedDay = selectedDay;
                     });
                   },
                   onPageChanged: (focusedDay) {
@@ -122,7 +122,7 @@ class _HistoryState extends State<History> {
                           .where(
                             (habit) =>
                                 // !(habit.startDateTime.isAfter(_focusedDay!)),
-                            AppUtils.historyIsDueToday(habit, _focusedDay!),
+                                AppUtils.historyIsDueToday(habit, _focusedDay!),
                           )
                           .toList(),
                     );
